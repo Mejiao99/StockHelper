@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface PortfolioBalancer {
 
-    List<InvestmentLine> balancer(List<InvestmentLine> currentList, List<InvestmentLine> wishList);
+    List<InvestmentLine> balancer(List<InvestmentLine> currentLines, List<InvestmentLine> expectedLines);
 
 }
