@@ -1,11 +1,18 @@
 package stockhelper.main;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
 
+
+import java.util.List;
+import java.util.Map;
+
+@AllArgsConstructor
 public class NaiveBalancer implements PortfolioBalancer {
+    private Market market;
+
 
     @Override
-    public List<InvestmentLine> balancer(List<InvestmentLine> currentList, List<InvestmentLine> wishList) {
+    public Map<String, Integer> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
         return null;
     }
 }

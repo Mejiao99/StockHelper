@@ -1,9 +1,10 @@
 package stockhelper.main;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PortfolioBalancer {
 
-    List<InvestmentLine> balancer(List<InvestmentLine> currentLines, List<InvestmentLine> expectedLines);
+    Map<String, Integer> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations);
 
 }

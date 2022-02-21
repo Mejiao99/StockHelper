@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 public class InvestmentLine {
     private String Ticket;
-    private Currency Value;
     private Integer Quantity;
     private String Account;
 }
