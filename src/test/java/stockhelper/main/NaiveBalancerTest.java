@@ -40,4 +40,32 @@ class NaiveBalancerTest {
 
     }
 
+    @Test
+    public void simple_tree_to_one_stock() {
+        // Preparation
+        // A = $10, B = $20
+        Market market = mock(Market.class);
+        when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
+        when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
+        when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));
+        when(market.getStockValue("D")).thenReturn(new Currency(15.0, "USD"));
+        InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
+        InvestmentLine stockB = new InvestmentLine("B", 90, "c1");
+        InvestmentLine stockC = new InvestmentLine("C", 125, "c1");
+
+        NaiveBalancer balancer = new NaiveBalancer(market);
+
+        // Execution
+        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA,stockB,stockC), Collections.singletonMap("D", 1.0));
+
+        // Validations:
+        assertNotNull(newAllocations);
+        assertEquals(1, newAllocations.size());
+        assertEquals(228, newAllocations.get("D"));
+        // 10 * 100 + 20*90 + 5*125 = 3425 = TOT MONEY
+        // 3425 / 15.0 = 228.333333333
+
+    }
+
+
 }
