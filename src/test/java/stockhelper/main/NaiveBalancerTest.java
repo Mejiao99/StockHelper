@@ -1,5 +1,6 @@
 package stockhelper.main;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
@@ -16,17 +17,31 @@ import static org.mockito.Mockito.when;
 
 
 class NaiveBalancerTest {
+    private Market market;
+    private NaiveBalancer balancer;
 
+    @BeforeEach
+    public void setup() {
+        market = mock(Market.class);
+        balancer = new NaiveBalancer(market);
+        when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
+        when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
+        when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));
+        when(market.getStockValue("D")).thenReturn(new Currency(15.0, "USD"));
+
+        when(market.getStockValue("X")).thenReturn(new Currency(7.0, "CAD"));
+        when(market.getStockValue("Y")).thenReturn(new Currency(9.0, "CAD"));
+        when(market.getStockValue("Z")).thenReturn(new Currency(12.0, "CAD"));
+
+    }
 
     @Test
     public void simple_single_stock() {
         // Preparation
         // A = $10, B = $20
-        Market market = mock(Market.class);
-        when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
-        when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
+
         InvestmentLine singleStock = new InvestmentLine("A", 100, "c1");
-        NaiveBalancer balancer = new NaiveBalancer(market);
+
 
         // Execution
         Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(singleStock), Collections.singletonMap("B", 1.0));
@@ -45,16 +60,10 @@ class NaiveBalancerTest {
     public void simple_tree_to_one_stock() {
         // Preparation
         // A = $10, B = $20
-        Market market = mock(Market.class);
-        when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
-        when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
-        when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));
-        when(market.getStockValue("D")).thenReturn(new Currency(15.0, "USD"));
+
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
         InvestmentLine stockB = new InvestmentLine("B", 90, "c1");
         InvestmentLine stockC = new InvestmentLine("C", 125, "c1");
-
-        NaiveBalancer balancer = new NaiveBalancer(market);
 
         // Execution
         Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.singletonMap("D", 1.0));
@@ -71,11 +80,6 @@ class NaiveBalancerTest {
     @Test
     public void one_to_three_stock() {
         // Preparation
-        Market market = mock(Market.class);
-        when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
-        when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
-        when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));
-        when(market.getStockValue("D")).thenReturn(new Currency(15.0, "USD"));
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
 
         NaiveBalancer balancer = new NaiveBalancer(market);
@@ -94,6 +98,32 @@ class NaiveBalancerTest {
         assertEquals(12, newAllocations.get("B"));
         assertEquals(70, newAllocations.get("C"));
         assertEquals(26, newAllocations.get("D"));
+        // 10 * 100 + 20*90 + 5*125 = 3425 = TOT MONEY
+        // 3425 / 15.0 = 228.333333333
+
+    }
+
+    @Test
+    public void three_to_three_stock() {
+        // Preparation
+        InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
+        InvestmentLine stockB = new InvestmentLine("B", 90, "c1");
+        InvestmentLine stockC = new InvestmentLine("C", 125, "c1");
+        Map<String, Double> allocations = new HashMap<>();
+        allocations.put("B", 0.25);
+        allocations.put("C", 0.35);
+        allocations.put("D", 0.40);
+
+        // Execution
+
+        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), allocations);
+
+        // Validations:
+        assertNotNull(newAllocations);
+        assertEquals(3, newAllocations.size());
+        assertEquals(42, newAllocations.get("B"));
+        assertEquals(239, newAllocations.get("C"));
+        assertEquals(91, newAllocations.get("D"));
         // 10 * 100 + 20*90 + 5*125 = 3425 = TOT MONEY
         // 3425 / 15.0 = 228.333333333
 
