@@ -3,7 +3,6 @@ package stockhelper.main;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Currency;
 
 @AllArgsConstructor
 @Getter
