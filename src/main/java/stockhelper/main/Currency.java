@@ -8,6 +8,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 public class Currency {
-    private BigDecimal Amount;
+    private Double Amount;
     private String Symbol;
 }
