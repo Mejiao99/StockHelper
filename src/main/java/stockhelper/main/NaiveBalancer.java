@@ -3,6 +3,7 @@ package stockhelper.main;
 import lombok.AllArgsConstructor;
 
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,12 @@ public class NaiveBalancer implements PortfolioBalancer {
 
     @Override
     public Map<String, Integer> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
+
+        if (currentItems.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+
         double totalValue = 0;
 
         for (InvestmentLine stock : currentItems) {

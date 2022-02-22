@@ -180,10 +180,10 @@ class NaiveBalancerTest {
 
         // Validations:
         assertNotNull(newAllocations);
-        assertEquals(1, newAllocations.size());
-        assertEquals(0, newAllocations.get("A"));
+        assertEquals(0, newAllocations.size());
 
     }
+
 
     // TODO: one test per empty list, empty map, null list, null map
 
