@@ -34,13 +34,13 @@ public class NaiveBalancer implements PortfolioBalancer {
             Currency ticketCurrency = market.getStockValue(ticket);
             System.out.println("ticketCurrency: " + ticketCurrency.getSymbol());
 
-            double conversionRate = market.ConversionRate("USD", ticketCurrency.getSymbol());
-            System.out.println("conversionRate: " + conversionRate);
-
+            double conversionRate = market.ConversionRate(ticketCurrency.getSymbol(), "USD");
+            System.out.println("XL1: " + market.ConversionRate("USD", "USD"));
 
             double ticketAmount = ticketCurrency.getAmount();
 
-            double priceUSD = ticketAmount / conversionRate;
+            double priceUSD = ticketAmount * conversionRate;
+            System.out.println("priceUSD: " + priceUSD);
 
             int stockQty = (int) ((totalValue * allocation) / priceUSD);
 

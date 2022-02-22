@@ -34,7 +34,10 @@ class NaiveBalancerTest {
         when(market.getStockValue("Z")).thenReturn(new Currency(12.0, "CAD"));
 
         when(market.ConversionRate("USD", "CAD")).thenReturn(1.265822784810127);
+        when(market.ConversionRate("USD", "USD")).thenReturn(1.0);
+
         when(market.ConversionRate("CAD", "USD")).thenReturn(0.79);
+        when(market.ConversionRate("CAD", "CAD")).thenReturn(1.0);
 
     }
 
@@ -135,18 +138,11 @@ class NaiveBalancerTest {
     @Test
     public void usd_to_cad_stock() {
         // Preparation
-        // A = $10 USD
-        // X = $7  CAD
-        // 1 USD = 1.265822784810127 CAD
-        // 7 CAD = $5.53 USD
-
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
         Map<String, Double> allocations = new HashMap<>();
         allocations.put("X", 1.0);
 
-
         // Execution
-
         Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
 
         // Validations:
@@ -154,6 +150,22 @@ class NaiveBalancerTest {
         assertEquals(1, newAllocations.size());
         assertEquals(180, newAllocations.get("X"));
 
+    }
+
+    @Test
+    public void cad_to_usd_stock() {
+        // Preparation
+        InvestmentLine stockA = new InvestmentLine("X", 100, "c1");
+        Map<String, Double> allocations = new HashMap<>();
+        allocations.put("A", 1.0);
+
+        // Execution
+        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
+
+        // Validations:
+        assertNotNull(newAllocations);
+        assertEquals(1, newAllocations.size());
+        assertEquals(55, newAllocations.get("A"));
 
     }
 
