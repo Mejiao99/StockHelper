@@ -14,6 +14,7 @@ public class NaiveBalancer implements PortfolioBalancer {
     @Override
     public Map<String, Integer> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
         double totalValue = 0;
+
         for (InvestmentLine stock : currentItems) {
 
             Currency stockValue = market.getStockValue(stock.getTicket());
@@ -24,7 +25,6 @@ public class NaiveBalancer implements PortfolioBalancer {
 
             totalValue = totalValue + eachValueUSD;
         }
-
         Map<String, Integer> results = new HashMap<>();
         for (Map.Entry<String, Double> entry : allocations.entrySet()) {
 
