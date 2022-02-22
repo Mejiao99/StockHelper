@@ -232,7 +232,4 @@ class NaiveBalancerTest {
 
     }
 
-    // TODO: one test per empty list, empty map, null list, null map
-
-
 }
