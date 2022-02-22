@@ -32,11 +32,11 @@ class NaiveBalancerTest {
         when(market.getStockValue("Y")).thenReturn(new Currency(9.0, "CAD"));
         when(market.getStockValue("Z")).thenReturn(new Currency(12.0, "CAD"));
 
-        when(market.conversionRate("USD", "CAD")).thenReturn(1.265822784810127);
-        when(market.conversionRate("USD", "USD")).thenReturn(1.0);
+        when(market.exchangeRate("USD", "CAD")).thenReturn(1.265822784810127);
+        when(market.exchangeRate("USD", "USD")).thenReturn(1.0);
 
-        when(market.conversionRate("CAD", "USD")).thenReturn(0.79);
-        when(market.conversionRate("CAD", "CAD")).thenReturn(1.0);
+        when(market.exchangeRate("CAD", "USD")).thenReturn(0.79);
+        when(market.exchangeRate("CAD", "CAD")).thenReturn(1.0);
 
     }
 
@@ -120,7 +120,6 @@ class NaiveBalancerTest {
         allocations.put("D", 0.40);
 
         // Execution
-
         Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), allocations);
 
         // Validations:

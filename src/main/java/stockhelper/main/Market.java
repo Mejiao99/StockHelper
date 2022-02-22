@@ -9,7 +9,7 @@ public interface Market {
     // ConversionRate(USD, COP) = 4000
     // ConversionRate(COP, USD) = 0.00025
 
-    default double conversionRate (String from, String to) {
+    default double exchangeRate(String from, String to) {
         return 1.0;
     }
 
