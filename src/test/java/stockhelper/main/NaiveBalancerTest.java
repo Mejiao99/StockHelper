@@ -33,6 +33,9 @@ class NaiveBalancerTest {
         when(market.getStockValue("Y")).thenReturn(new Currency(9.0, "CAD"));
         when(market.getStockValue("Z")).thenReturn(new Currency(12.0, "CAD"));
 
+        when(market.ConversionRate("USD", "CAD")).thenReturn(1.265822784810127);
+        when(market.ConversionRate("CAD", "USD")).thenReturn(0.79);
+
     }
 
     @Test
@@ -135,7 +138,7 @@ class NaiveBalancerTest {
         // A = $10 USD
         // X = $7  CAD
         // 1 USD = 1.265822784810127 CAD
-        // 7 CAD = $5.50 USD
+        // 7 CAD = $5.53 USD
 
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
         Map<String, Double> allocations = new HashMap<>();
@@ -153,7 +156,6 @@ class NaiveBalancerTest {
 
 
     }
-
 
 
 }

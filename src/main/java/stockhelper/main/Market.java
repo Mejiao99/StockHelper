@@ -8,8 +8,9 @@ public interface Market {
     //TODO: ASSUME ONE TYPE
     // ConversionRate(USD, COP) = 4000
     // ConversionRate(COP, USD) = 0.00025
+
     default double ConversionRate(String from, String to) {
-        return 0;
+        return 1.0;
     }
 
 }
