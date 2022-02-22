@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class InvestmentLine {
-    private String Ticket;
-    private Integer Quantity;
-    private String Account;
+    private String ticket;
+    private Integer quantity;
+    private String account;
 }

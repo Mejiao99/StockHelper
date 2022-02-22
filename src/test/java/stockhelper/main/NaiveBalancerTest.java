@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,11 +32,11 @@ class NaiveBalancerTest {
         when(market.getStockValue("Y")).thenReturn(new Currency(9.0, "CAD"));
         when(market.getStockValue("Z")).thenReturn(new Currency(12.0, "CAD"));
 
-        when(market.ConversionRate("USD", "CAD")).thenReturn(1.265822784810127);
-        when(market.ConversionRate("USD", "USD")).thenReturn(1.0);
+        when(market.conversionRate("USD", "CAD")).thenReturn(1.265822784810127);
+        when(market.conversionRate("USD", "USD")).thenReturn(1.0);
 
-        when(market.ConversionRate("CAD", "USD")).thenReturn(0.79);
-        when(market.ConversionRate("CAD", "CAD")).thenReturn(1.0);
+        when(market.conversionRate("CAD", "USD")).thenReturn(0.79);
+        when(market.conversionRate("CAD", "CAD")).thenReturn(1.0);
 
     }
 
