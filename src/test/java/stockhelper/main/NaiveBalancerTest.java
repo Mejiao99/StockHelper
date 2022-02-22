@@ -129,5 +129,31 @@ class NaiveBalancerTest {
 
     }
 
+    @Test
+    public void usd_to_cad_stock() {
+        // Preparation
+        // A = $10 USD
+        // X = $7  CAD
+        // 1 USD = 1.265822784810127 CAD
+        // 7 CAD = $5.50 USD
+
+        InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
+        Map<String, Double> allocations = new HashMap<>();
+        allocations.put("X", 1.0);
+
+
+        // Execution
+
+        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
+
+        // Validations:
+        assertNotNull(newAllocations);
+        assertEquals(1, newAllocations.size());
+        assertEquals(180, newAllocations.get("X"));
+
+
+    }
+
+
 
 }
