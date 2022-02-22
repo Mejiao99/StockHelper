@@ -15,15 +15,11 @@ public class NaiveBalancer implements PortfolioBalancer {
     @Override
     public Map<String, Integer> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
 
-        if (currentItems == null) {
+        if (currentItems == null || currentItems.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        if (currentItems.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        if (allocations.isEmpty()) {
+        if (allocations == null || allocations.isEmpty()) {
             return Collections.emptyMap();
         }
 

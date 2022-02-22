@@ -191,7 +191,7 @@ class NaiveBalancerTest {
         Map<String, Double> allocations = new HashMap<>();
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), allocations);
+        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.emptyMap());
 
         // Validations:
         assertNotNull(newAllocations);
@@ -212,9 +212,25 @@ class NaiveBalancerTest {
 
         // Validations:
         assertNotNull(newAllocations);
+        assertEquals(0, newAllocations.size());
 
     }
 
+    @Test
+    public void null_map() {
+        // Preparation
+        InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
+        InvestmentLine stockB = new InvestmentLine("B", 90, "c1");
+        InvestmentLine stockC = new InvestmentLine("C", 125, "c1");
+
+        // Execution
+        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), null);
+
+        // Validations:
+        assertNotNull(newAllocations);
+        assertEquals(0, newAllocations.size());
+
+    }
 
     // TODO: one test per empty list, empty map, null list, null map
 
