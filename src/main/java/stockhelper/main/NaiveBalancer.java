@@ -17,39 +17,29 @@ public class NaiveBalancer implements PortfolioBalancer {
         for (InvestmentLine stock : currentItems) {
 
             Currency stockValue = market.getStockValue(stock.getTicket());
-            System.out.println("stockValue: " + stockValue.getSymbol());
+            double conversionRate = market.ConversionRate(stockValue.getSymbol(), "USD");
 
             double eachValue = stockValue.getAmount() * stock.getQuantity();
-            totalValue = totalValue + eachValue;
+            double eachValueUSD = eachValue * conversionRate;
 
+            totalValue = totalValue + eachValueUSD;
         }
 
-
         Map<String, Integer> results = new HashMap<>();
-
         for (Map.Entry<String, Double> entry : allocations.entrySet()) {
+
             String ticket = entry.getKey();
             double allocation = entry.getValue();
 
             Currency ticketCurrency = market.getStockValue(ticket);
-            System.out.println("ticketCurrency: " + ticketCurrency.getSymbol());
-
             double conversionRate = market.ConversionRate(ticketCurrency.getSymbol(), "USD");
-            System.out.println("XL1: " + market.ConversionRate("USD", "USD"));
 
             double ticketAmount = ticketCurrency.getAmount();
-
             double priceUSD = ticketAmount * conversionRate;
-            System.out.println("priceUSD: " + priceUSD);
-
             int stockQty = (int) ((totalValue * allocation) / priceUSD);
 
-
             results.put(ticket, stockQty);
-
         }
-
-
         return results;
     }
 }

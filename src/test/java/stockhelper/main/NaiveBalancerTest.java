@@ -168,7 +168,7 @@ class NaiveBalancerTest {
         assertEquals(55, newAllocations.get("A"));
 
     }
-    
+
     // TODO: one test per empty list, empty map, null list, null map
 
 
