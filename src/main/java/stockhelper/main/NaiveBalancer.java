@@ -19,6 +19,10 @@ public class NaiveBalancer implements PortfolioBalancer {
             return Collections.emptyMap();
         }
 
+        if (allocations.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
         double totalValue = 0;
 
         for (InvestmentLine stock : currentItems) {
