@@ -199,6 +199,22 @@ class NaiveBalancerTest {
 
     }
 
+    @Test
+    public void null_list() {
+        // Preparation
+        Map<String, Double> allocations = new HashMap<>();
+        allocations.put("B", 0.25);
+        allocations.put("C", 0.35);
+        allocations.put("D", 0.40);
+
+        // Execution
+        Map<String, Integer> newAllocations = balancer.balance(null, allocations);
+
+        // Validations:
+        assertNotNull(newAllocations);
+
+    }
+
 
     // TODO: one test per empty list, empty map, null list, null map
 
