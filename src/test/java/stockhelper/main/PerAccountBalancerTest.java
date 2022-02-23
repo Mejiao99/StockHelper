@@ -54,7 +54,22 @@ public class PerAccountBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(2, newAllocations.size());
-        validateInvestmentLine(find(newAllocations, "B"), "B", 50, "c1");
-        validateInvestmentLine(find(newAllocations, "B"), "B", 10, "c2");
+        validateInvestmentLine(find(newAllocations, "B", "c1"), "B", 50, "c1");
+        validateInvestmentLine(find(newAllocations, "B", "c2"), "B", 10, "c2");
+    }
+
+    private void validateInvestmentLine(InvestmentLine investmentLine, String ticket, int quantity, String account) {
+        assertEquals(ticket, investmentLine.getTicket());
+        assertEquals(quantity, investmentLine.getQuantity());
+        assertEquals(account, investmentLine.getAccount());
+    }
+
+    private InvestmentLine find(List<InvestmentLine> newAllocations, String ticket, String account) {
+        for (InvestmentLine stock : newAllocations) {
+            if (stock.getTicket().equals(ticket) && stock.getAccount().equals(account)) {
+                return stock;
+            }
+        }
+        return null;
     }
 }
