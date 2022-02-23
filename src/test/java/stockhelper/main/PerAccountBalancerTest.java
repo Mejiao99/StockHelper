@@ -15,12 +15,12 @@ import static org.mockito.Mockito.when;
 
 public class PerAccountBalancerTest {
     private Market market;
-    private NaiveBalancer balancer;
+    private PerAccountBalancer balancer;
 
     @BeforeEach
     public void setup() {
         market = mock(Market.class);
-        balancer = new NaiveBalancer(market);
+        balancer = new PerAccountBalancer(market);
         when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
         when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
         when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));
@@ -65,6 +65,8 @@ public class PerAccountBalancerTest {
     }
 
     private InvestmentLine find(List<InvestmentLine> newAllocations, String ticket, String account) {
+
+
         for (InvestmentLine stock : newAllocations) {
             if (stock.getTicket().equals(ticket) && stock.getAccount().equals(account)) {
                 return stock;
