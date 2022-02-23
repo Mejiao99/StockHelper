@@ -3,24 +3,26 @@ package stockhelper.main;
 import lombok.AllArgsConstructor;
 
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.emptyList;
 
 @AllArgsConstructor
 public class NaiveBalancer implements PortfolioBalancer {
     private Market market;
 
     @Override
-    public Map<String, Integer> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
+    public List<InvestmentLine> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
 
         if (currentItems == null || currentItems.isEmpty()) {
-            return Collections.emptyMap();
+            return emptyList();
         }
 
         if (allocations == null || allocations.isEmpty()) {
-            return Collections.emptyMap();
+            return emptyList();
         }
 
         double totalValue = 0;
@@ -35,6 +37,7 @@ public class NaiveBalancer implements PortfolioBalancer {
 
             totalValue = totalValue + eachValueUSD;
         }
+
         Map<String, Integer> results = new HashMap<>();
         for (Map.Entry<String, Double> entry : allocations.entrySet()) {
 
@@ -50,6 +53,12 @@ public class NaiveBalancer implements PortfolioBalancer {
 
             results.put(ticket, stockQty);
         }
-        return results;
+
+        List<InvestmentLine> balanceInvestmentList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : results.entrySet()) {
+            InvestmentLine balanceStock = new InvestmentLine(entry.getKey(), entry.getValue(), "default");
+            balanceInvestmentList.add(balanceStock);
+        }
+        return balanceInvestmentList;
     }
 }

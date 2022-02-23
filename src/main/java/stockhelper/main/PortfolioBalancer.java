@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface PortfolioBalancer {
-
-    Map<String, Integer> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations);
+    // retornar listaInvestmentLine
+    // elInvesmentLine debe tener una cuenta default
+    List<InvestmentLine> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations);
 
 }

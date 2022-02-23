@@ -4,10 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,43 +40,31 @@ class NaiveBalancerTest {
     @Test
     public void simple_single_stock() {
         // Preparation
-        // A = $10, B = $20
-
         InvestmentLine singleStock = new InvestmentLine("A", 100, "c1");
 
-
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(singleStock), Collections.singletonMap("B", 1.0));
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(singleStock), Collections.singletonMap("B", 1.0));
 
         // Validations:
-        // newAllocations have two elements
-        // "A" -> 0
-        // "B" -> 50
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        assertEquals(50, newAllocations.get("B"));
-
+        validateInvestmentLine(find(newAllocations, "B"), "B", 50, "default");
     }
 
     @Test
     public void simple_tree_to_one_stock() {
         // Preparation
-        // A = $10, B = $20
-
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
         InvestmentLine stockB = new InvestmentLine("B", 90, "c1");
         InvestmentLine stockC = new InvestmentLine("C", 125, "c1");
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.singletonMap("D", 1.0));
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.singletonMap("D", 1.0));
 
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        assertEquals(228, newAllocations.get("D"));
-        // 10 * 100 + 20*90 + 5*125 = 3425 = TOT MONEY
-        // 3425 / 15.0 = 228.333333333
-
+        validateInvestmentLine(find(newAllocations, "D"), "D", 228, "default");
     }
 
     @Test
@@ -94,19 +79,16 @@ class NaiveBalancerTest {
         allocations.put("D", 0.40);
 
         // Execution
-
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
 
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(3, newAllocations.size());
-        assertEquals(12, newAllocations.get("B"));
-        assertEquals(70, newAllocations.get("C"));
-        assertEquals(26, newAllocations.get("D"));
-        // 10 * 100 + 20*90 + 5*125 = 3425 = TOT MONEY
-        // 3425 / 15.0 = 228.333333333
-
+        validateInvestmentLine(find(newAllocations, "B"), "B", 12, "default");
+        validateInvestmentLine(find(newAllocations, "C"), "C", 70, "default");
+        validateInvestmentLine(find(newAllocations, "D"), "D", 26, "default");
     }
+
 
     @Test
     public void three_to_three_stock() {
@@ -120,17 +102,14 @@ class NaiveBalancerTest {
         allocations.put("D", 0.40);
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), allocations);
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), allocations);
 
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(3, newAllocations.size());
-        assertEquals(42, newAllocations.get("B"));
-        assertEquals(239, newAllocations.get("C"));
-        assertEquals(91, newAllocations.get("D"));
-        // 10 * 100 + 20*90 + 5*125 = 3425 = TOT MONEY
-        // 3425 / 15.0 = 228.333333333
-
+        validateInvestmentLine(find(newAllocations, "B"), "B", 42, "default");
+        validateInvestmentLine(find(newAllocations, "C"), "C", 239, "default");
+        validateInvestmentLine(find(newAllocations, "D"), "D", 91, "default");
     }
 
     @Test
@@ -141,13 +120,12 @@ class NaiveBalancerTest {
         allocations.put("X", 1.0);
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
 
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        assertEquals(180, newAllocations.get("X"));
-
+        validateInvestmentLine(find(newAllocations, "X"), "X", 180, "default");
     }
 
     @Test
@@ -158,13 +136,12 @@ class NaiveBalancerTest {
         allocations.put("A", 1.0);
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA), allocations);
 
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        assertEquals(55, newAllocations.get("A"));
-
+        validateInvestmentLine(find(newAllocations, "A"), "A", 55, "default");
     }
 
     @Test
@@ -174,12 +151,11 @@ class NaiveBalancerTest {
         allocations.put("A", 1.0);
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(), allocations);
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(), allocations);
 
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(0, newAllocations.size());
-
     }
 
     @Test
@@ -191,7 +167,7 @@ class NaiveBalancerTest {
         Map<String, Double> allocations = new HashMap<>();
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.emptyMap());
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.emptyMap());
 
         // Validations:
         assertNotNull(newAllocations);
@@ -208,7 +184,7 @@ class NaiveBalancerTest {
         allocations.put("D", 0.40);
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(null, allocations);
+        List<InvestmentLine> newAllocations = balancer.balance(null, allocations);
 
         // Validations:
         assertNotNull(newAllocations);
@@ -224,12 +200,30 @@ class NaiveBalancerTest {
         InvestmentLine stockC = new InvestmentLine("C", 125, "c1");
 
         // Execution
-        Map<String, Integer> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), null);
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), null);
 
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(0, newAllocations.size());
 
     }
+//
+//    // TODO crear una nueva clase PerAccountBalancer por cada cuenta hace un balance esto retorna una lista de InvestmentLine y Allocation
+//    // List(InvestLine) (Lista investment line, allocation)
+//    //
 
+    private void validateInvestmentLine(InvestmentLine investmentLine, String ticket, int quantity, String account) {
+        assertEquals(ticket, investmentLine.getTicket());
+        assertEquals(quantity, investmentLine.getQuantity());
+        assertEquals(account, investmentLine.getAccount());
+    }
+
+    private InvestmentLine find(List<InvestmentLine> newAllocations, String ticket) {
+        for (InvestmentLine stock : newAllocations) {
+            if (stock.getTicket().equals(ticket)) {
+                return stock;
+            }
+        }
+        return null;
+    }
 }
