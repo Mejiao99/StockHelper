@@ -36,6 +36,7 @@ public class PerAccountBalancerTest {
         when(market.exchangeRate("CAD", "USD")).thenReturn(0.79);
         when(market.exchangeRate("CAD", "CAD")).thenReturn(1.0);
 
+
     }
 
     @Test
@@ -60,6 +61,72 @@ public class PerAccountBalancerTest {
         validateInvestmentLine(find(newAllocations, "B", "c2"), "B", 10, "c2");
     }
 
+    @Test
+    public void eight_to_eight_per_account() {
+        // Preparation
+        InvestmentLine c1StockA = new InvestmentLine("A", 51, "c1");
+        InvestmentLine c1StockB = new InvestmentLine("B", 20, "c1");
+        InvestmentLine c1StockC = new InvestmentLine("C", 60, "c1");
+        InvestmentLine c1StockD = new InvestmentLine("D", 25, "c1");
+        InvestmentLine c1StockX = new InvestmentLine("X", 75, "c1");
+        InvestmentLine c1StockY = new InvestmentLine("Y", 10, "c1");
+
+        InvestmentLine c2StockA = new InvestmentLine("A", 50, "c2");
+        InvestmentLine c2StockB = new InvestmentLine("B", 150, "c2");
+        InvestmentLine c2StockC = new InvestmentLine("C", 95, "c2");
+        InvestmentLine c2StockD = new InvestmentLine("D", 40, "c2");
+        InvestmentLine c2StockX = new InvestmentLine("X", 80, "c2");
+        InvestmentLine c2StockY = new InvestmentLine("Y", 200, "c2");
+
+        Map<String, Double> allocations = new HashMap<>();
+        allocations.put("A", 0.20);
+        allocations.put("B", 0.5);
+        allocations.put("C", 0.5);
+        allocations.put("D", 0.10);
+        allocations.put("X", 0.30);
+        allocations.put("Y", 0.30);
+        // C1 maths
+        // 510+400+300+375+414+71
+        // 2070 * 0.20 / 10 = 41
+        // 2070 * 0.5 / 20 = 51
+        // 2070 * 0.5 / 5 = 207
+        // 2070 * 0.10 / 15 = 13
+        // 2070 * 0.30 / 5.53 = 112
+        // 2070 * 0.30 / 7.11 = 87
+        // C2 maths
+        // 500+3000+475+600+442+1422
+        // 6439 * 0.20 / 10  = 128
+        // 6439 * 0.5 / 20 = 160
+        // 6439 * 0.5 / 5 = 643
+        // 6439 * 0.10 / 15 = 54
+        // 6439 * 0.30 / 5.53 = 349
+        // 6439 * 0.30 / 7.11 = 271
+
+        // Execution
+        List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(c1StockA, c1StockB, c1StockC, c1StockD, c1StockX, c1StockY
+                        , c2StockA, c2StockB, c2StockC, c2StockD, c2StockX, c2StockY),
+                allocations);
+
+
+        // Validations:
+        assertNotNull(newAllocations);
+        assertEquals(12, newAllocations.size());
+        System.out.println(newAllocations);
+        validateInvestmentLine(find(newAllocations, "A", "c1"), "A", 41, "c1");
+        validateInvestmentLine(find(newAllocations, "B", "c1"), "B", 51, "c1");
+        validateInvestmentLine(find(newAllocations, "C", "c1"), "C", 207, "c1");
+        validateInvestmentLine(find(newAllocations, "D", "c1"), "D", 13, "c1");
+        validateInvestmentLine(find(newAllocations, "X", "c1"), "X", 112, "c1");
+        validateInvestmentLine(find(newAllocations, "Y", "c1"), "Y", 87, "c1");
+
+        validateInvestmentLine(find(newAllocations, "A", "c2"), "A", 128, "c2");
+        validateInvestmentLine(find(newAllocations, "B", "c2"), "B", 160, "c2");
+        validateInvestmentLine(find(newAllocations, "C", "c2"), "C", 643, "c2");
+        validateInvestmentLine(find(newAllocations, "D", "c2"), "D", 42, "c2");
+        validateInvestmentLine(find(newAllocations, "X", "c2"), "X", 349, "c2");
+        validateInvestmentLine(find(newAllocations, "Y", "c2"), "Y", 271, "c2");
+    }
+
     private void validateInvestmentLine(InvestmentLine investmentLine, String ticket, int quantity, String account) {
         assertEquals(ticket, investmentLine.getTicket());
         assertEquals(quantity, investmentLine.getQuantity());
@@ -76,15 +143,6 @@ public class PerAccountBalancerTest {
         }
         return null;
     }
-    // TODO: add validations more stocks, more accounts
-    // ¿Qué transacciones tengo que hacer para llegar a lo esperado?
-    // Dos tipos de transacción vender o comprar ¿Qué cuénta, qué ticket, cuánto? ¿Vender o comprar?
-    // Entradas: 1. Lista de inversiones 2. Lista de lo que quiero
-    // Salida: Lista de transacciones (nueva clase)
-    // Cuenta 1 -> accion A -> Vender 10
-    // Ejemplo:
-    // Inversiones actuales = A:10:C1, B:20:C1
-    // Lista de lo que quiero = A:20:C1, C:10:C2
-    // Salida: A:10:C1:COMPRAR, B:20:C1:VENDER, C:10:C2:COMPRAR
+
 
 }

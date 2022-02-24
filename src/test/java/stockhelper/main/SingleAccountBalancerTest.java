@@ -220,13 +220,10 @@ class SingleAccountBalancerTest {
         });
 
         //Validations
-        assertEquals(new HashSet<>(Arrays.asList("c1","c2")), ex.getAccounts());
+        assertEquals(new HashSet<>(Arrays.asList("c1", "c2")), ex.getAccounts());
     }
-//
-//    // TODO crear una nueva clase PerAccountBalancer por cada cuenta hace un balance esto retorna una lista de InvestmentLine y Allocation
-//    // List(InvestLine) (Lista investment line, allocation)
-//    //
-
+    //
+    //
     private void validateInvestmentLine(InvestmentLine investmentLine, String ticket, int quantity, String account) {
         assertEquals(ticket, investmentLine.getTicket());
         assertEquals(quantity, investmentLine.getQuantity());
