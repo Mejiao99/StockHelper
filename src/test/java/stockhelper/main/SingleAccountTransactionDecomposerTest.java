@@ -17,17 +17,14 @@ public class SingleAccountTransactionDecomposerTest {
 
     @BeforeEach
     public void setup() {
-
+        decomposer = new SingleAccountTransactionDecomposer();
     }
 
     @Test
     public void single_transaction_decomposer() {
         // Preparation
-        InvestmentLine stockAFrom = new InvestmentLine("A", 100, "c1");
-        InvestmentLine stockATo = new InvestmentLine("A", 75, "c1");
-
-        List<InvestmentLine> fromAllocations = Arrays.asList(stockAFrom);
-        List<InvestmentLine> toAllocations = Arrays.asList(stockATo);
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 100, "c1"));
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 75, "c1"));
 
         // Execution
         List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
@@ -35,9 +32,9 @@ public class SingleAccountTransactionDecomposerTest {
         // Validations
         assertNotNull(transactionsList);
         assertEquals(1, transactionsList.size());
-        assertEquals(TransactionOperation.SELL, transactionsList.get(0).getOperation());
         assertEquals("A", transactionsList.get(0).getTicket());
         assertEquals(25, transactionsList.get(0).getQuantity());
+        assertEquals("c1", transactionsList.get(0).getAccount());
+        assertEquals(TransactionOperation.SELL, transactionsList.get(0).getOperation());
     }
-
 }
