@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 // Ejemplo:
 // Inversiones actuales = A:10:C1, B:20:C1
@@ -19,18 +18,15 @@ import java.util.stream.Collectors;
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
     @Override
     public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
-        Set<String> fromTickets = new HashSet<>();
-        Set<String> toTickets = new HashSet<>();
-        for (InvestmentLine line : from) {
-            fromTickets.add(line.getTicket());
-        }
-        for (InvestmentLine line : to) {
-            toTickets.add(line.getTicket());
-        }
-        Set<String> toBuy = setOperationRest(toTickets, fromTickets);
-        String ticket = String.valueOf(toBuy.stream().findFirst().get());
+        Set<String> fromTickets = getTicketsFromInvestmentList(from);
+        Set<String> toTickets = getTicketsFromInvestmentList(to);
 
-        InvestmentLine investmentLine = to.get(0);
+        Set<String> toBuy = setOperationRest(toTickets, fromTickets);
+        String ticket = null;
+        for (String buy : toBuy) {
+            ticket = buy;
+        }
+        InvestmentLine investmentLine = getInvestmentLine(to, ticket);
         int quantity = investmentLine.getQuantity();
         String account = investmentLine.getAccount();
         Transaction transaction = new Transaction(ticket, quantity, account, TransactionOperation.BUY);
@@ -41,9 +37,26 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         return result;
     }
 
-    private Set<String> setOperationRest(final Set<String> to, final Set<String> from) {
-        Set<String> result = new HashSet<>(to);
-        result.removeIf(from::contains);
+    private InvestmentLine getInvestmentLine(List<InvestmentLine> investmentLineList, String ticket) {
+        for (InvestmentLine line : investmentLineList) {
+            if (line.getTicket().equals(ticket)) {
+                return line;
+            }
+        }
+        return null;
+    }
+
+    private Set<String> getTicketsFromInvestmentList(List<InvestmentLine> from) {
+        Set<String> result = new HashSet<>();
+        for (InvestmentLine line : from) {
+            result.add(line.getTicket());
+        }
+        return result;
+    }
+
+    private Set<String> setOperationRest(final Set<String> setA, final Set<String> setB) {
+        Set<String> result = new HashSet<>(setA);
+        result.removeAll(setB);
         return result;
     }
 
