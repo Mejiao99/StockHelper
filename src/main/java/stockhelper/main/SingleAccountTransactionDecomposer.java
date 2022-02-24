@@ -21,12 +21,16 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         Set<String> fromTickets = getTicketsFromInvestmentList(from);
         Set<String> toTickets = getTicketsFromInvestmentList(to);
 
-        Set<String> toBuy = setOperationRest(toTickets, fromTickets);
-        String ticket = null;
-        for (String buy : toBuy) {
-            ticket = buy;
+        Set<String> tickets = subtractSet(toTickets, fromTickets);
+
+        for (String ticket : tickets) {
+            InvestmentLine investmentLine = getInvestmentLine(to, ticket);
+            int quantity = investmentLine.getQuantity();
+            String account = investmentLine.getAccount();
+            Transaction transaction = new Transaction(ticket, quantity, account, TransactionOperation.BUY);
         }
         InvestmentLine investmentLine = getInvestmentLine(to, ticket);
+        ticket = investmentLine.getTicket();
         int quantity = investmentLine.getQuantity();
         String account = investmentLine.getAccount();
         Transaction transaction = new Transaction(ticket, quantity, account, TransactionOperation.BUY);
@@ -46,15 +50,15 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         return null;
     }
 
-    private Set<String> getTicketsFromInvestmentList(List<InvestmentLine> from) {
+    private Set<String> getTicketsFromInvestmentList(List<InvestmentLine> investmentLineList) {
         Set<String> result = new HashSet<>();
-        for (InvestmentLine line : from) {
+        for (InvestmentLine line : investmentLineList) {
             result.add(line.getTicket());
         }
         return result;
     }
 
-    private Set<String> setOperationRest(final Set<String> setA, final Set<String> setB) {
+    private Set<String> subtractSet(final Set<String> setA, final Set<String> setB) {
         Set<String> result = new HashSet<>(setA);
         result.removeAll(setB);
         return result;
