@@ -3,12 +3,12 @@ package stockhelper.main;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
+import lombok.ToString;
 
 
 @AllArgsConstructor
 @Getter
-@Builder(toBuilder=true)
+@ToString
 public class InvestmentLine {
     private String ticket;
     private Integer quantity;

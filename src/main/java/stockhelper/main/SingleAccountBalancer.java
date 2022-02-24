@@ -2,28 +2,36 @@ package stockhelper.main;
 
 import lombok.AllArgsConstructor;
 
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import static java.util.Collections.emptyList;
 
 @AllArgsConstructor
-public class NaiveBalancer implements PortfolioBalancer {
+public class SingleAccountBalancer implements PortfolioBalancer {
     private Market market;
 
     @Override
     public List<InvestmentLine> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
+        // 2. Como todas son iguales usar la primera -> result
 
         if (currentItems == null || currentItems.isEmpty()) {
-            return emptyList();
+            return Collections.emptyList();
         }
 
         if (allocations == null || allocations.isEmpty()) {
-            return emptyList();
+            return Collections.emptyList();
         }
+
+        Set<String> accounts = getAllAccounts(currentItems);
+        if (accounts.size() != 1) {
+            throw new DivergeAccountsException(accounts);
+        }
+        String account = accounts.stream().findFirst().get();
 
         double totalValue = 0;
 
@@ -50,15 +58,22 @@ public class NaiveBalancer implements PortfolioBalancer {
             double ticketAmount = ticketCurrency.getAmount();
             double priceUSD = ticketAmount * conversionRate;
             int stockQty = (int) ((totalValue * allocation) / priceUSD);
-
             results.put(ticket, stockQty);
         }
 
         List<InvestmentLine> balanceInvestmentList = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : results.entrySet()) {
-            InvestmentLine balanceStock = new InvestmentLine(entry.getKey(), entry.getValue(), "default");
+            InvestmentLine balanceStock = new InvestmentLine(entry.getKey(), entry.getValue(), account);
             balanceInvestmentList.add(balanceStock);
         }
         return balanceInvestmentList;
+    }
+
+    private Set<String> getAllAccounts(List<InvestmentLine> currentItems) {
+        Set<String> accounts = new HashSet<>();
+        for (InvestmentLine line : currentItems) {
+            accounts.add(line.getAccount());
+        }
+        return accounts;
     }
 }

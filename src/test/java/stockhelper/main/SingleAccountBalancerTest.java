@@ -6,20 +6,19 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 
-class NaiveBalancerTest {
+class SingleAccountBalancerTest {
     private Market market;
-    private NaiveBalancer balancer;
+    private SingleAccountBalancer balancer;
 
     @BeforeEach
     public void setup() {
         market = mock(Market.class);
-        balancer = new NaiveBalancer(market);
+        balancer = new SingleAccountBalancer(market);
         when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
         when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
         when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));
@@ -48,7 +47,7 @@ class NaiveBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        validateInvestmentLine(find(newAllocations, "B"), "B", 50, "default");
+        validateInvestmentLine(find(newAllocations, "B"), "B", 50, "c1");
     }
 
     @Test
@@ -64,7 +63,7 @@ class NaiveBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        validateInvestmentLine(find(newAllocations, "D"), "D", 228, "default");
+        validateInvestmentLine(find(newAllocations, "D"), "D", 228, "c1");
     }
 
     @Test
@@ -72,7 +71,7 @@ class NaiveBalancerTest {
         // Preparation
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
 
-        NaiveBalancer balancer = new NaiveBalancer(market);
+        SingleAccountBalancer balancer = new SingleAccountBalancer(market);
         Map<String, Double> allocations = new HashMap<>();
         allocations.put("B", 0.25);
         allocations.put("C", 0.35);
@@ -84,9 +83,9 @@ class NaiveBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(3, newAllocations.size());
-        validateInvestmentLine(find(newAllocations, "B"), "B", 12, "default");
-        validateInvestmentLine(find(newAllocations, "C"), "C", 70, "default");
-        validateInvestmentLine(find(newAllocations, "D"), "D", 26, "default");
+        validateInvestmentLine(find(newAllocations, "B"), "B", 12, "c1");
+        validateInvestmentLine(find(newAllocations, "C"), "C", 70, "c1");
+        validateInvestmentLine(find(newAllocations, "D"), "D", 26, "c1");
     }
 
 
@@ -107,9 +106,9 @@ class NaiveBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(3, newAllocations.size());
-        validateInvestmentLine(find(newAllocations, "B"), "B", 42, "default");
-        validateInvestmentLine(find(newAllocations, "C"), "C", 239, "default");
-        validateInvestmentLine(find(newAllocations, "D"), "D", 91, "default");
+        validateInvestmentLine(find(newAllocations, "B"), "B", 42, "c1");
+        validateInvestmentLine(find(newAllocations, "C"), "C", 239, "c1");
+        validateInvestmentLine(find(newAllocations, "D"), "D", 91, "c1");
     }
 
     @Test
@@ -125,7 +124,7 @@ class NaiveBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        validateInvestmentLine(find(newAllocations, "X"), "X", 180, "default");
+        validateInvestmentLine(find(newAllocations, "X"), "X", 180, "c1");
     }
 
     @Test
@@ -141,7 +140,7 @@ class NaiveBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(1, newAllocations.size());
-        validateInvestmentLine(find(newAllocations, "A"), "A", 55, "default");
+        validateInvestmentLine(find(newAllocations, "A"), "A", 55, "c1");
     }
 
     @Test
@@ -206,6 +205,22 @@ class NaiveBalancerTest {
         assertNotNull(newAllocations);
         assertEquals(0, newAllocations.size());
 
+    }
+
+    @Test
+    public void validate_error_when_accounts_diverge() {
+        // Preparation
+        InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
+        InvestmentLine stockB = new InvestmentLine("B", 90, "c1");
+        InvestmentLine stockC = new InvestmentLine("C", 125, "c2");
+
+        // Execution
+        DivergeAccountsException ex = assertThrows(DivergeAccountsException.class, () -> {
+            balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.singletonMap("D", 1.0));
+        });
+
+        //Validations
+        assertEquals(new HashSet<>(Arrays.asList("c1","c2")), ex.getAccounts());
     }
 //
 //    // TODO crear una nueva clase PerAccountBalancer por cada cuenta hace un balance esto retorna una lista de InvestmentLine y Allocation

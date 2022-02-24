@@ -2,34 +2,44 @@ package stockhelper.main;
 
 import lombok.AllArgsConstructor;
 
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyList;
+import java.util.*;
 
 @AllArgsConstructor
 public class PerAccountBalancer implements PortfolioBalancer {
-    private Market market;
+    private SingleAccountBalancer singleAccountBalancer;
 
     @Override
     public List<InvestmentLine> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
+        List<String> accounts = getAllAccounts(currentItems);
 
-        for (InvestmentLine stock : currentItems) {
-            String ticket = stock.getTicket();
-            String account = stock.getAccount();
-
-            double totalValue = 0;
-            if (stock.getTicket().equals(ticket) && stock.getAccount().equals(account)) {
-                Currency stockValue = market.getStockValue(stock.getTicket());
-                double conversionRate = market.exchangeRate(stockValue.getSymbol(), "USD");
-
-                double eachValue = stockValue.getAmount() * stock.getQuantity();
-                double eachValueUSD = eachValue * conversionRate;
-                totalValue = totalValue + eachValueUSD;
-                System.out.println(totalValue);
-            }
+        List<InvestmentLine> result = new ArrayList<>();
+        for (String account : accounts) {
+            // Buscar todas las acciones de esa cuenta
+            List<InvestmentLine> accountLines = filterAccount(currentItems, account);
+            // balancear cuenta accountLines
+            List<InvestmentLine> balancedLines = singleAccountBalancer.balance(accountLines, allocations);
+            // cuentas balanceadas se añaden al resultado
+            result.addAll(balancedLines);
         }
 
-        return null;
+        return result;
+    }
+
+    private List<String> getAllAccounts(List<InvestmentLine> currentItems) {
+        Set<String> accounts = new HashSet<>();
+        for (InvestmentLine line : currentItems) {
+            accounts.add(line.getAccount());
+        }
+        return new ArrayList<>(accounts);
+    }
+
+    private List<InvestmentLine> filterAccount(List<InvestmentLine> currentItems, String account) {
+        List<InvestmentLine> accountList = new ArrayList<>();
+        for (InvestmentLine line : currentItems) {
+            if (line.getAccount().equals(account)) {
+                accountList.add(line);
+            }
+        }
+        return accountList;
     }
 }
