@@ -62,7 +62,7 @@ public class PerAccountBalancerTest {
     }
 
     @Test
-    public void eight_to_eight_per_account() {
+    public void six_to_six_per_account() {
         // Preparation
         InvestmentLine c1StockA = new InvestmentLine("A", 51, "c1");
         InvestmentLine c1StockB = new InvestmentLine("B", 20, "c1");
