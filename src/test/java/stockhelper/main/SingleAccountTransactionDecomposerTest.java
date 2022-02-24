@@ -26,6 +26,7 @@ public class SingleAccountTransactionDecomposerTest {
         List<InvestmentLine> fromAllocations = Arrays.asList();
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"));
 
+
         // Execution
         List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
 

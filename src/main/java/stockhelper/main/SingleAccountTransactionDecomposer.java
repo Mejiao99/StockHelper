@@ -18,24 +18,25 @@ import java.util.Set;
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
     @Override
     public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
-        Set<String> fromTickets = getTicketsFromInvestmentList(from);
-        Set<String> toTickets = getTicketsFromInvestmentList(to);
+        Set<String> fromTickets = getTicketsFromInvestments(from);
+        Set<String> toTickets = getTicketsFromInvestments(to);
 
         List<Transaction> result = new ArrayList<>();
-        //HandleBuy
-        Set<String> toBuy = subtractSet(toTickets, fromTickets);
 
+        // Handle stocks to buy
+        Set<String> toBuy = subtractSet(toTickets, fromTickets);
         for (String ticket : toBuy) {
             InvestmentLine investmentLine = getInvestmentLine(to, ticket);
             int quantity = investmentLine.getQuantity();
             String account = investmentLine.getAccount();
             result.add(new Transaction(ticket, quantity, account, TransactionOperation.BUY));
         }
+
         return result;
     }
 
-    private InvestmentLine getInvestmentLine(List<InvestmentLine> investmentLineList, String ticket) {
-        for (InvestmentLine line : investmentLineList) {
+    private InvestmentLine getInvestmentLine(List<InvestmentLine> investments, String ticket) {
+        for (InvestmentLine line : investments) {
             if (line.getTicket().equals(ticket)) {
                 return line;
             }
@@ -43,9 +44,9 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         return null;
     }
 
-    private Set<String> getTicketsFromInvestmentList(List<InvestmentLine> investmentLineList) {
+    private Set<String> getTicketsFromInvestments(List<InvestmentLine> investments) {
         Set<String> result = new HashSet<>();
-        for (InvestmentLine line : investmentLineList) {
+        for (InvestmentLine line : investments) {
             result.add(line.getTicket());
         }
         return result;
