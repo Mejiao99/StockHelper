@@ -85,22 +85,7 @@ public class PerAccountBalancerTest {
         allocations.put("D", 0.10);
         allocations.put("X", 0.30);
         allocations.put("Y", 0.30);
-        // C1 maths
-        // 510+400+300+375+414+71
-        // 2070 * 0.20 / 10 = 41
-        // 2070 * 0.5 / 20 = 51
-        // 2070 * 0.5 / 5 = 207
-        // 2070 * 0.10 / 15 = 13
-        // 2070 * 0.30 / 5.53 = 112
-        // 2070 * 0.30 / 7.11 = 87
-        // C2 maths
-        // 500+3000+475+600+442+1422
-        // 6439 * 0.20 / 10  = 128
-        // 6439 * 0.5 / 20 = 160
-        // 6439 * 0.5 / 5 = 643
-        // 6439 * 0.10 / 15 = 54
-        // 6439 * 0.30 / 5.53 = 349
-        // 6439 * 0.30 / 7.11 = 271
+
 
         // Execution
         List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(c1StockA, c1StockB, c1StockC, c1StockD, c1StockX, c1StockY
