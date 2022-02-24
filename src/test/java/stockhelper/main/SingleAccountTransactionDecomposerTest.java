@@ -21,7 +21,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void single_transaction_decomposer() {
+    public void single_stock_sell() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c1"));
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c1"));
