@@ -31,7 +31,46 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             String account = investmentLine.getAccount();
             result.add(new Transaction(ticket, quantity, account, TransactionOperation.BUY));
         }
+        // Handle stocks to sell
+        Set<String> toSell = subtractSet(fromTickets, toTickets);
+        for (String ticket : toSell) {
+            InvestmentLine investmentTo = getInvestmentLine(to, ticket);
+            InvestmentLine investmentFrom = getInvestmentLine(from, ticket);
+            int quantityFrom = investmentFrom.getQuantity();
+            int quantityTo = investmentFrom.getQuantity();
+            int quantity = quantityFrom - quantityTo;
+            String account = investmentTo.getAccount();
+            result.add(new Transaction(ticket, quantity, account, TransactionOperation.SELL));
+        }
+        // Handle stocks to change
+        Set<String> toChange = intersectionSet(fromTickets, toTickets);
+        for (String ticket : toChange) {
+            InvestmentLine investmentTo = getInvestmentLine(to, ticket);
+            InvestmentLine investmentFrom = getInvestmentLine(from, ticket);
 
+            int quantityTo = investmentTo.getQuantity();
+            int quantityFrom = investmentFrom.getQuantity();
+            int quantity = 0;
+            TransactionOperation transactionOperation = null;
+
+            if (quantityFrom > quantityTo) {
+                quantity = quantityFrom - quantityTo;
+                transactionOperation = TransactionOperation.SELL;
+            }
+            if (quantityFrom < quantityTo) {
+                quantity = quantityTo - quantityFrom;
+                transactionOperation = transactionOperation.BUY;
+            }
+
+            String account = investmentTo.getAccount();
+            result.add(new Transaction(ticket, quantity, account, transactionOperation));
+        }
+        return result;
+    }
+
+    private Set<String> intersectionSet(Set<String> setA, Set<String> setB) {
+        Set<String> result = new HashSet<>(setA);
+        result.retainAll(setB);
         return result;
     }
 
