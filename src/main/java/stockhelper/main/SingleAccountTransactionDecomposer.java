@@ -21,23 +21,16 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         Set<String> fromTickets = getTicketsFromInvestmentList(from);
         Set<String> toTickets = getTicketsFromInvestmentList(to);
 
-        Set<String> tickets = subtractSet(toTickets, fromTickets);
+        List<Transaction> result = new ArrayList<>();
+        //HandleBuy
+        Set<String> toBuy = subtractSet(toTickets, fromTickets);
 
-        for (String ticket : tickets) {
+        for (String ticket : toBuy) {
             InvestmentLine investmentLine = getInvestmentLine(to, ticket);
             int quantity = investmentLine.getQuantity();
             String account = investmentLine.getAccount();
-            Transaction transaction = new Transaction(ticket, quantity, account, TransactionOperation.BUY);
+            result.add(new Transaction(ticket, quantity, account, TransactionOperation.BUY));
         }
-        InvestmentLine investmentLine = getInvestmentLine(to, ticket);
-        ticket = investmentLine.getTicket();
-        int quantity = investmentLine.getQuantity();
-        String account = investmentLine.getAccount();
-        Transaction transaction = new Transaction(ticket, quantity, account, TransactionOperation.BUY);
-        List<Transaction> result = new ArrayList<>();
-
-        result.add(transaction);
-
         return result;
     }
 
