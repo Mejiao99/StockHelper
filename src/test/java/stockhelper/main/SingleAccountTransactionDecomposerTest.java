@@ -3,8 +3,6 @@ package stockhelper.main;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,11 +31,7 @@ public class SingleAccountTransactionDecomposerTest {
         // Validations
         assertNotNull(transactionsList);
         assertEquals(1, transactionsList.size());
-        Transaction transaction = transactionsList.get(0);
-        assertEquals("A", transaction.getTicket());
-        assertEquals(750, transaction.getQuantity());
-        assertEquals("c", transaction.getAccount());
-        assertEquals(TransactionOperation.BUY, transaction.getOperation());
+        validateTransaction(find(transactionsList, "A"), "A", 750, "c", TransactionOperation.BUY);
     }
 
     @Test
@@ -52,10 +46,63 @@ public class SingleAccountTransactionDecomposerTest {
         // Validations
         assertNotNull(transactionsList);
         assertEquals(1, transactionsList.size());
-        Transaction transaction = transactionsList.get(0);
-        assertEquals("A", transaction.getTicket());
-        assertEquals(249, transaction.getQuantity());
-        assertEquals("c", transaction.getAccount());
-        assertEquals(TransactionOperation.SELL, transaction.getOperation());
+
+        validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
+
     }
+
+    @Test
+    public void two_stock_one_sell_one_buy() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"));
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 250, "c"));
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(2, transactionsList.size());
+
+        validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "B"), "B", 20, "c", TransactionOperation.BUY);
+
+    }
+
+    @Test
+    public void three_stock_one_sell_one_buy_one_hold() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 50, "c"));
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 250, "c"), new InvestmentLine("C", 50, "c"));
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(3, transactionsList.size());
+
+        validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "B"), "B", 20, "c", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "C"), "C", 50, "c", TransactionOperation.HOLD);
+
+    }
+
+
+    private void validateTransaction(Transaction transaction, String ticket, int quantity, String account, Enum operation) {
+        assertEquals(ticket, transaction.getTicket());
+        assertEquals(quantity, transaction.getQuantity());
+        assertEquals(account, transaction.getAccount());
+        assertEquals(operation, transaction.getOperation());
+    }
+
+    private Transaction find(List<Transaction> transactionList, String ticket) {
+        for (Transaction transaction : transactionList) {
+            if (transaction.getTicket().equals(ticket)) {
+                return transaction;
+            }
+        }
+        return null;
+    }
+
 }

@@ -34,12 +34,10 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         // Handle stocks to sell
         Set<String> toSell = subtractSet(fromTickets, toTickets);
         for (String ticket : toSell) {
-            InvestmentLine investmentTo = getInvestmentLine(to, ticket);
-            InvestmentLine investmentFrom = getInvestmentLine(from, ticket);
-            int quantityFrom = investmentFrom.getQuantity();
-            int quantityTo = investmentFrom.getQuantity();
-            int quantity = quantityFrom - quantityTo;
-            String account = investmentTo.getAccount();
+            InvestmentLine investment = getInvestmentLine(from, ticket);
+
+            int quantity = investment.getQuantity();
+            String account = investment.getAccount();
             result.add(new Transaction(ticket, quantity, account, TransactionOperation.SELL));
         }
         // Handle stocks to change
@@ -60,6 +58,10 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             if (quantityFrom < quantityTo) {
                 quantity = quantityTo - quantityFrom;
                 transactionOperation = transactionOperation.BUY;
+            }
+            if (quantityFrom == quantityTo) {
+                quantity = quantityTo;
+                transactionOperation = transactionOperation.HOLD;
             }
 
             String account = investmentTo.getAccount();
