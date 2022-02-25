@@ -52,28 +52,43 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void two_stock_one_sell_one_buy() {
+    public void no_sell_buy() {
         // Preparation
-        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"));
-        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 250, "c"));
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"));
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"));
 
         // Execution
         List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
 
         // Validations
         assertNotNull(transactionsList);
-        assertEquals(2, transactionsList.size());
+        assertEquals(0, transactionsList.size());
+    }
 
-        validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
-        validateTransaction(find(transactionsList, "B"), "B", 20, "c", TransactionOperation.BUY);
+    @Test
+    public void tree_stock_to_buy() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 10, "c"), new InvestmentLine("C", 100, "c"));
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"));
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(3, transactionsList.size());
+
+        validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "B"), "B", 220, "c", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "C"), "C", 400, "c", TransactionOperation.BUY);
 
     }
 
     @Test
-    public void three_stock_one_sell_one_buy() {
+    public void tree_stock_to_sell() {
         // Preparation
-        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 50, "c"));
-        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 250, "c"), new InvestmentLine("C", 50, "c"));
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"));
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 10, "c"), new InvestmentLine("C", 100, "c"));
 
         // Execution
         List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
@@ -83,10 +98,29 @@ public class SingleAccountTransactionDecomposerTest {
         assertEquals(3, transactionsList.size());
 
         validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
-        validateTransaction(find(transactionsList, "B"), "B", 20, "c", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "B"), "B", 220, "c", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "C"), "C", 400, "c", TransactionOperation.SELL);
 
     }
 
+    @Test
+    public void four_stock_to_buy_and_sell() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 10, "c"), new InvestmentLine("C", 100, "c"), new InvestmentLine("D", 54, "c"));
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"), new InvestmentLine("D", 54, "c"));
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(3, transactionsList.size());
+
+        validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "B"), "B", 220, "c", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "C"), "C", 400, "c", TransactionOperation.BUY);
+
+    }
 
     private void validateTransaction(Transaction transaction, String ticket, int quantity, String account, Enum operation) {
         assertEquals(ticket, transaction.getTicket());

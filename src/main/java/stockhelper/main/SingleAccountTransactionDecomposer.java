@@ -1,6 +1,8 @@
 package stockhelper.main;
 
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.Set;
 // Lista de lo que quiero = A:20:C1, C:10:C2
 // Salida: A:10:C1:COMPRAR, B:20:C1:VENDER, C:10:C2:COMPRAR
 
-
+@ToString
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
     @Override
     public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
@@ -59,6 +61,7 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             }
             if (quantityFrom == quantityTo) {
                 quantity = quantityTo;
+                transactionOperation = transactionOperation.BUY;
                 continue;
             }
 
