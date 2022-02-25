@@ -70,7 +70,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void three_stock_one_sell_one_buy_one_hold() {
+    public void three_stock_one_sell_one_buy() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 50, "c"));
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 250, "c"), new InvestmentLine("C", 50, "c"));
@@ -84,7 +84,6 @@ public class SingleAccountTransactionDecomposerTest {
 
         validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
         validateTransaction(find(transactionsList, "B"), "B", 20, "c", TransactionOperation.BUY);
-        validateTransaction(find(transactionsList, "C"), "C", 50, "c", TransactionOperation.HOLD);
 
     }
 

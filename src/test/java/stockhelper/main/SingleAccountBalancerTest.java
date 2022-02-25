@@ -222,8 +222,7 @@ class SingleAccountBalancerTest {
         //Validations
         assertEquals(new HashSet<>(Arrays.asList("c1", "c2")), ex.getAccounts());
     }
-    //
-    //
+
     private void validateInvestmentLine(InvestmentLine investmentLine, String ticket, int quantity, String account) {
         assertEquals(ticket, investmentLine.getTicket());
         assertEquals(quantity, investmentLine.getQuantity());

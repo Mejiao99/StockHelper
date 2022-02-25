@@ -14,14 +14,13 @@ public class PerAccountBalancer implements PortfolioBalancer {
 
         List<InvestmentLine> result = new ArrayList<>();
         for (String account : accounts) {
-            // Buscar todas las acciones de esa cuenta
+            // Find all account actions
             List<InvestmentLine> accountLines = filterAccount(currentItems, account);
-            // balancear cuenta accountLines
+            // Balance account
             List<InvestmentLine> balancedLines = singleAccountBalancer.balance(accountLines, allocations);
-            // cuentas balanceadas se añaden al resultado
+            // Balanced accounts add to result
             result.addAll(balancedLines);
         }
-
         return result;
     }
 

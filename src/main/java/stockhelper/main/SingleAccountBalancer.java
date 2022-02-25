@@ -17,7 +17,6 @@ public class SingleAccountBalancer implements PortfolioBalancer {
 
     @Override
     public List<InvestmentLine> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
-        // 2. Como todas son iguales usar la primera -> result
 
         if (currentItems == null || currentItems.isEmpty()) {
             return Collections.emptyList();

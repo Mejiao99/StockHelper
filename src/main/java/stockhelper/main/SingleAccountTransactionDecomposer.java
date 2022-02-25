@@ -12,12 +12,10 @@ import java.util.Set;
 // Salida: A:10:C1:COMPRAR, B:20:C1:VENDER, C:10:C2:COMPRAR
 
 
-//Ten en cuenta esto para mañana. Los conjuntos (matemáticamente y en Java) tienen operacione de adicion y resta.
-//        {1,2} + {2,3} = {1,2,3}
-//        {1,2} - {2,3} = {1}
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
     @Override
     public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
+
         Set<String> fromTickets = getTicketsFromInvestments(from);
         Set<String> toTickets = getTicketsFromInvestments(to);
 
@@ -61,7 +59,7 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             }
             if (quantityFrom == quantityTo) {
                 quantity = quantityTo;
-                transactionOperation = transactionOperation.HOLD;
+                continue;
             }
 
             String account = investmentTo.getAccount();
@@ -98,5 +96,4 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         result.removeAll(setB);
         return result;
     }
-
 }
