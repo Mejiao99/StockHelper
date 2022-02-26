@@ -38,7 +38,7 @@ public class SingleAccountTransactionDecomposerTest {
     public void only_sell() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"));
-        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"));
+        List<InvestmentLine> toAllocations = Arrays.asList();
 
         // Execution
         List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
@@ -46,8 +46,7 @@ public class SingleAccountTransactionDecomposerTest {
         // Validations
         assertNotNull(transactionsList);
         assertEquals(1, transactionsList.size());
-
-        validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "A"), "A", 0, "c", TransactionOperation.SELL);
 
     }
 
