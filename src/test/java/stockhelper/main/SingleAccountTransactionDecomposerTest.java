@@ -19,7 +19,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void only_buy_single_stock() {
+    public void only_buy() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList();
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"));
@@ -35,7 +35,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void single_stock_sell() {
+    public void only_sell() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"));
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"));
@@ -52,7 +52,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void no_sell_buy() {
+    public void no_sell_no_buy() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"));
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"));
@@ -66,7 +66,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void tree_stock_to_buy() {
+    public void buy_few_stocks() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 10, "c"), new InvestmentLine("C", 100, "c"));
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"));
@@ -85,7 +85,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void tree_stock_to_sell() {
+    public void sell_few_stocks() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"));
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 10, "c"), new InvestmentLine("C", 100, "c"));
@@ -104,7 +104,7 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void four_stock_to_buy_and_sell() {
+    public void buy_and_sell_few_stocks() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 999, "c"), new InvestmentLine("B", 10, "c"), new InvestmentLine("C", 100, "c"), new InvestmentLine("D", 54, "c"));
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"), new InvestmentLine("D", 54, "c"));
