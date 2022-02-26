@@ -124,11 +124,10 @@ public class SingleAccountTransactionDecomposerTest {
     @Test
     public void empty_from_investments_list() {
         // Preparation
-        List<InvestmentLine> fromAllocations = Collections.emptyList();
         List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"), new InvestmentLine("D", 54, "c"));
 
         // Execution
-        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+        List<Transaction> transactionsList = decomposer.decompose(Collections.emptyList(), toAllocations);
 
         // Validations
         assertNotNull(transactionsList);
@@ -142,10 +141,9 @@ public class SingleAccountTransactionDecomposerTest {
     public void empty_to_investments_list() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"), new InvestmentLine("D", 54, "c"));
-        List<InvestmentLine> toAllocations = Collections.emptyList();
 
         // Execution
-        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, Collections.emptyList());
 
         // Validations
         assertNotNull(transactionsList);
