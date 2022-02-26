@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -121,10 +122,43 @@ public class SingleAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void empty_investments_list() {
+    public void empty_from_investments_list() {
         // Preparation
-        List<InvestmentLine> fromAllocations = Arrays.asList();
-        List<InvestmentLine> toAllocations = Arrays.asList();
+        List<InvestmentLine> fromAllocations = Collections.emptyList();
+        List<InvestmentLine> toAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"), new InvestmentLine("D", 54, "c"));
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(4, transactionsList.size());
+        validateTransaction(find(transactionsList, "A"), "A", 750, "c", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "B"), "B", 230, "c", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "C"), "C", 500, "c", TransactionOperation.BUY);
+    }
+
+    @Test
+    public void empty_to_investments_list() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Arrays.asList(new InvestmentLine("A", 750, "c"), new InvestmentLine("B", 230, "c"), new InvestmentLine("C", 500, "c"), new InvestmentLine("D", 54, "c"));
+        List<InvestmentLine> toAllocations = Collections.emptyList();
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(4, transactionsList.size());
+        validateTransaction(find(transactionsList, "A"), "A", 750, "c", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "B"), "B", 230, "c", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "C"), "C", 500, "c", TransactionOperation.SELL);
+    }
+    @Test
+    public void empty_from_and_to_investments_list() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Collections.emptyList();
+        List<InvestmentLine> toAllocations = Collections.emptyList();
 
         // Execution
         List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
@@ -132,7 +166,6 @@ public class SingleAccountTransactionDecomposerTest {
         // Validations
         assertNotNull(transactionsList);
         assertEquals(0, transactionsList.size());
-
     }
 
     @Test
