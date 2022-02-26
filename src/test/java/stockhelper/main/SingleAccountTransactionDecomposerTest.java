@@ -46,8 +46,7 @@ public class SingleAccountTransactionDecomposerTest {
         // Validations
         assertNotNull(transactionsList);
         assertEquals(1, transactionsList.size());
-        validateTransaction(find(transactionsList, "A"), "A", 0, "c", TransactionOperation.SELL);
-
+        validateTransaction(find(transactionsList, "A"), "A", 999, "c", TransactionOperation.SELL);
     }
 
     @Test
@@ -119,6 +118,35 @@ public class SingleAccountTransactionDecomposerTest {
         validateTransaction(find(transactionsList, "B"), "B", 220, "c", TransactionOperation.BUY);
         validateTransaction(find(transactionsList, "C"), "C", 400, "c", TransactionOperation.BUY);
 
+    }
+
+    @Test
+    public void empty_investments_list() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Arrays.asList();
+        List<InvestmentLine> toAllocations = Arrays.asList();
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(0, transactionsList.size());
+
+    }
+
+    @Test
+    public void null_investments_list() {
+        // Preparation
+        List<InvestmentLine> fromAllocations = Arrays.asList();
+        List<InvestmentLine> toAllocations = Arrays.asList();
+
+        // Execution
+        List<Transaction> transactionsList = decomposer.decompose(null, null);
+
+        // Validations
+        assertNotNull(transactionsList);
+        assertEquals(0, transactionsList.size());
     }
 
     private void validateTransaction(Transaction transaction, String ticket, int quantity, String account, Enum operation) {
