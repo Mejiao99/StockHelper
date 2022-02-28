@@ -18,11 +18,7 @@ import java.util.Set;
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
     @Override
     public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
-
-        if (from == null || to == null) {
-            return Collections.emptyList();
-        }
-
+        //TODO: ITERATE fromTicks + toTickets
         Set<String> fromTickets = getTicketsFromInvestments(from);
         Set<String> toTickets = getTicketsFromInvestments(to);
 
@@ -65,8 +61,6 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
                 transactionOperation = transactionOperation.BUY;
             }
             if (quantityFrom == quantityTo) {
-                quantity = quantityTo;
-                transactionOperation = transactionOperation.BUY;
                 continue;
             }
 

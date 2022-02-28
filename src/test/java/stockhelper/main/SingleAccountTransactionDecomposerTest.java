@@ -120,7 +120,6 @@ public class SingleAccountTransactionDecomposerTest {
         validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
         validateTransaction(find(transactionsList, "B"), "B", 220, "c", TransactionOperation.BUY);
         validateTransaction(find(transactionsList, "C"), "C", 400, "c", TransactionOperation.BUY);
-
     }
 
     @Test
