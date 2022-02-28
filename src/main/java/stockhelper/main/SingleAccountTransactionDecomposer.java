@@ -11,14 +11,12 @@ import java.util.Set;
 @ToString
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
     @Override
-    public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
-        Set<String> fromTickets = getTicketsFromInvestments(from);
-        Set<String> toTickets = getTicketsFromInvestments(to);
-        // After this line fromTickets equals to allTickets.
-        fromTickets.addAll(toTickets);
+    public List<Transaction> decompose(final List<InvestmentLine> from, final List<InvestmentLine> to) {
+        final Set<String> allTickets = new HashSet<>();
+        allTickets.addAll(getTicketsFromInvestments(from));
+        allTickets.addAll(getTicketsFromInvestments(to));
 
         List<Transaction> result = new ArrayList<>();
-        Set<String> allTickets = fromTickets;
         for (String ticket : allTickets) {
             String account = getAccountPerLists(from, to, ticket);
             int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
@@ -32,17 +30,16 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         return result;
     }
 
-    private String getAccountPerLists(List<InvestmentLine> listA, List<InvestmentLine> listB, String ticket) {
-        String account = "";
+    private String getAccountPerLists(final List<InvestmentLine> listA, final List<InvestmentLine> listB, final String ticket) {
         if (getAccountPerTicket(listA, ticket) != null) {
-            account = getAccountPerTicket(listA, ticket);
+            return getAccountPerTicket(listA, ticket);
         } else if (getAccountPerTicket(listB, ticket) != null) {
-            account = getAccountPerTicket(listB, ticket);
+            return getAccountPerTicket(listB, ticket);
         }
-        return account;
+        return null;
     }
 
-    private String getAccountPerTicket(List<InvestmentLine> investments, String ticket) {
+    private String getAccountPerTicket(final List<InvestmentLine> investments, final String ticket) {
         if (investments == null || investments.isEmpty()) {
             return null;
         }
@@ -54,7 +51,7 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         return null;
     }
 
-    private int getQuantityPerTicket(List<InvestmentLine> investments, String ticket) {
+    private int getQuantityPerTicket(final List<InvestmentLine> investments, final String ticket) {
         for (InvestmentLine line : investments) {
             if (line.getTicket().equals(ticket)) {
                 return line.getQuantity();
@@ -63,33 +60,11 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         return 0;
     }
 
-    private Set<String> intersectionSet(Set<String> setA, Set<String> setB) {
-        Set<String> result = new HashSet<>(setA);
-        result.retainAll(setB);
-        return result;
-    }
-
-    private InvestmentLine getInvestmentLine(List<InvestmentLine> investments, String ticket) {
-        for (InvestmentLine line : investments) {
-            if (line.getTicket().equals(ticket)) {
-
-                return line;
-            }
-        }
-        return null;
-    }
-
-    private Set<String> getTicketsFromInvestments(List<InvestmentLine> investments) {
+    private Set<String> getTicketsFromInvestments(final List<InvestmentLine> investments) {
         Set<String> result = new HashSet<>();
         for (InvestmentLine line : investments) {
             result.add(line.getTicket());
         }
-        return result;
-    }
-
-    private Set<String> subtractSet(final Set<String> setA, final Set<String> setB) {
-        Set<String> result = new HashSet<>(setA);
-        result.removeAll(setB);
         return result;
     }
 }
