@@ -20,30 +20,35 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         List<Transaction> result = new ArrayList<>();
         Set<String> allTickets = fromTickets;
         for (String ticket : allTickets) {
-            InvestmentLine investmentFrom = getInvestmentLine(from, ticket);
-            InvestmentLine investmentTo = getInvestmentLine(to, ticket);
+
+            String account = "";
+            if (getAccountPerTicket(from, ticket) != null) {
+                account = getAccountPerTicket(from, ticket);
+            } else if (getAccountPerTicket(to, ticket) != null) {
+                account = getAccountPerTicket(to, ticket);
+            }
 
             int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
-
-            TransactionOperation transactionOperation = null;
             if (difference == 0) {
-                continue;
             } else if (difference > 0) {
-                transactionOperation = TransactionOperation.SELL;
-            } else if (difference < 0) {
-                difference = -difference;
-                transactionOperation = transactionOperation.BUY;
+                result.add(new Transaction(ticket, difference, account, TransactionOperation.SELL));
+            } else {
+                result.add(new Transaction(ticket, -difference, account, TransactionOperation.BUY));
             }
-            String account = "";
-            if (investmentTo != null) {
-                account = investmentTo.getAccount();
-            }
-            if (investmentFrom != null) {
-                account = investmentFrom.getAccount();
-            }
-            result.add(new Transaction(ticket, difference, account, transactionOperation));
         }
         return result;
+    }
+
+    private String getAccountPerTicket(List<InvestmentLine> investments, String ticket) {
+        if (investments == null || investments.isEmpty()) {
+            return null;
+        }
+        for (InvestmentLine line : investments) {
+            if (line.getTicket().equals(ticket)) {
+                return line.getAccount();
+            }
+        }
+        return null;
     }
 
     private int getQuantityPerTicket(List<InvestmentLine> investments, String ticket) {
