@@ -4,15 +4,9 @@ package stockhelper.main;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-// Ejemplo:
-// Inversiones actuales = A:10:C1, B:20:C1
-// Lista de lo que quiero = A:20:C1, C:10:C2
-// Salida: A:10:C1:COMPRAR, B:20:C1:VENDER, C:10:C2:COMPRAR
 
 @ToString
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
@@ -23,36 +17,23 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         Set<String> toTickets = getTicketsFromInvestments(to);
         // After this line fromTickets equals to allTickets.
         fromTickets.addAll(toTickets);
-        Set<String> allTickets = fromTickets;
-
 
         List<Transaction> result = new ArrayList<>();
-
-//        Set<String> toChange = intersectionSet(fromTickets, toTickets);
+        Set<String> allTickets = fromTickets;
         for (String ticket : allTickets) {
-            InvestmentLine investmentTo = getInvestmentLine(to, ticket);
             InvestmentLine investmentFrom = getInvestmentLine(from, ticket);
+            InvestmentLine investmentTo = getInvestmentLine(to, ticket);
 
-            int quantityTo = 0;
-            if (investmentTo != null) {
-                quantityTo = investmentTo.getQuantity();
-            }
-            int quantityFrom = 0;
-            if (investmentFrom != null) {
-                quantityFrom = investmentFrom.getQuantity();
-            }
+            int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
 
-            int quantity = 0;
             TransactionOperation transactionOperation = null;
-            if (quantityFrom > quantityTo) {
-                quantity = quantityFrom - quantityTo;
+            if (difference > 0) {
                 transactionOperation = TransactionOperation.SELL;
             }
-            if (quantityFrom < quantityTo) {
-                quantity = quantityTo - quantityFrom;
+            if (difference < 0) {
                 transactionOperation = transactionOperation.BUY;
             }
-            if (quantityFrom == quantityTo) {
+            if (difference == 0) {
                 continue;
             }
             String account = "";
@@ -62,9 +43,21 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             if (investmentFrom != null) {
                 account = investmentFrom.getAccount();
             }
-            result.add(new Transaction(ticket, quantity, account, transactionOperation));
+            if (difference < 0) {
+                difference = -difference;
+            }
+            result.add(new Transaction(ticket, difference, account, transactionOperation));
         }
         return result;
+    }
+
+    private int getQuantityPerTicket(List<InvestmentLine> investments, String ticket) {
+        for (InvestmentLine line : investments) {
+            if (line.getTicket().equals(ticket)) {
+                return line.getQuantity();
+            }
+        }
+        return 0;
     }
 
     private Set<String> intersectionSet(Set<String> setA, Set<String> setB) {
@@ -74,10 +67,9 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
     }
 
     private InvestmentLine getInvestmentLine(List<InvestmentLine> investments, String ticket) {
-
         for (InvestmentLine line : investments) {
             if (line.getTicket().equals(ticket)) {
-                System.err.println(line);
+
                 return line;
             }
         }
