@@ -12,7 +12,6 @@ import java.util.Set;
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
     @Override
     public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
-        //TODO: ITERATE fromTicks + toTickets
         Set<String> fromTickets = getTicketsFromInvestments(from);
         Set<String> toTickets = getTicketsFromInvestments(to);
         // After this line fromTickets equals to allTickets.
@@ -27,14 +26,13 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
 
             TransactionOperation transactionOperation = null;
-            if (difference > 0) {
-                transactionOperation = TransactionOperation.SELL;
-            }
-            if (difference < 0) {
-                transactionOperation = transactionOperation.BUY;
-            }
             if (difference == 0) {
                 continue;
+            } else if (difference > 0) {
+                transactionOperation = TransactionOperation.SELL;
+            } else if (difference < 0) {
+                difference = -difference;
+                transactionOperation = transactionOperation.BUY;
             }
             String account = "";
             if (investmentTo != null) {
@@ -42,9 +40,6 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             }
             if (investmentFrom != null) {
                 account = investmentFrom.getAccount();
-            }
-            if (difference < 0) {
-                difference = -difference;
             }
             result.add(new Transaction(ticket, difference, account, transactionOperation));
         }
