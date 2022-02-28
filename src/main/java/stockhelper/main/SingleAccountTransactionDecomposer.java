@@ -21,37 +21,29 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         //TODO: ITERATE fromTicks + toTickets
         Set<String> fromTickets = getTicketsFromInvestments(from);
         Set<String> toTickets = getTicketsFromInvestments(to);
+        // After this line fromTickets equals to allTickets.
+        fromTickets.addAll(toTickets);
+        Set<String> allTickets = fromTickets;
+
 
         List<Transaction> result = new ArrayList<>();
 
-        // Handle stocks to buy
-        Set<String> toBuy = subtractSet(toTickets, fromTickets);
-        for (String ticket : toBuy) {
-            InvestmentLine investmentLine = getInvestmentLine(to, ticket);
-            int quantity = investmentLine.getQuantity();
-            String account = investmentLine.getAccount();
-            result.add(new Transaction(ticket, quantity, account, TransactionOperation.BUY));
-        }
-        // Handle stocks to sell
-        Set<String> toSell = subtractSet(fromTickets, toTickets);
-        for (String ticket : toSell) {
-            InvestmentLine investment = getInvestmentLine(from, ticket);
-
-            int quantity = investment.getQuantity();
-            String account = investment.getAccount();
-            result.add(new Transaction(ticket, quantity, account, TransactionOperation.SELL));
-        }
-        // Handle stocks to change
-        Set<String> toChange = intersectionSet(fromTickets, toTickets);
-        for (String ticket : toChange) {
+//        Set<String> toChange = intersectionSet(fromTickets, toTickets);
+        for (String ticket : allTickets) {
             InvestmentLine investmentTo = getInvestmentLine(to, ticket);
             InvestmentLine investmentFrom = getInvestmentLine(from, ticket);
 
-            int quantityTo = investmentTo.getQuantity();
-            int quantityFrom = investmentFrom.getQuantity();
+            int quantityTo = 0;
+            if (investmentTo != null) {
+                quantityTo = investmentTo.getQuantity();
+            }
+            int quantityFrom = 0;
+            if (investmentFrom != null) {
+                quantityFrom = investmentFrom.getQuantity();
+            }
+
             int quantity = 0;
             TransactionOperation transactionOperation = null;
-
             if (quantityFrom > quantityTo) {
                 quantity = quantityFrom - quantityTo;
                 transactionOperation = TransactionOperation.SELL;
@@ -63,8 +55,13 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             if (quantityFrom == quantityTo) {
                 continue;
             }
-
-            String account = investmentTo.getAccount();
+            String account = "";
+            if (investmentTo != null) {
+                account = investmentTo.getAccount();
+            }
+            if (investmentFrom != null) {
+                account = investmentFrom.getAccount();
+            }
             result.add(new Transaction(ticket, quantity, account, transactionOperation));
         }
         return result;
@@ -77,8 +74,10 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
     }
 
     private InvestmentLine getInvestmentLine(List<InvestmentLine> investments, String ticket) {
+
         for (InvestmentLine line : investments) {
             if (line.getTicket().equals(ticket)) {
+                System.err.println(line);
                 return line;
             }
         }
