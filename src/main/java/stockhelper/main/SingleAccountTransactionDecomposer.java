@@ -16,10 +16,10 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         allTickets.addAll(getTicketsFromInvestments(from));
         allTickets.addAll(getTicketsFromInvestments(to));
 
-        List<Transaction> result = new ArrayList<>();
-        for (String ticket : allTickets) {
-            String account = getAccountPerLists(from, to, ticket);
-            int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
+        final List<Transaction> result = new ArrayList<>();
+        for (final String ticket : allTickets) {
+            final String account = getAccountPerLists(from, to, ticket);
+            final int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
             if (difference == 0) {
             } else if (difference > 0) {
                 result.add(new Transaction(ticket, difference, account, TransactionOperation.SELL));
@@ -40,10 +40,7 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
     }
 
     private String getAccountPerTicket(final List<InvestmentLine> investments, final String ticket) {
-        if (investments == null || investments.isEmpty()) {
-            return null;
-        }
-        for (InvestmentLine line : investments) {
+        for (final InvestmentLine line : investments) {
             if (line.getTicket().equals(ticket)) {
                 return line.getAccount();
             }
@@ -52,7 +49,7 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
     }
 
     private int getQuantityPerTicket(final List<InvestmentLine> investments, final String ticket) {
-        for (InvestmentLine line : investments) {
+        for (final InvestmentLine line : investments) {
             if (line.getTicket().equals(ticket)) {
                 return line.getQuantity();
             }
@@ -61,8 +58,8 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
     }
 
     private Set<String> getTicketsFromInvestments(final List<InvestmentLine> investments) {
-        Set<String> result = new HashSet<>();
-        for (InvestmentLine line : investments) {
+        final Set<String> result = new HashSet<>();
+        for (final InvestmentLine line : investments) {
             result.add(line.getTicket());
         }
         return result;
