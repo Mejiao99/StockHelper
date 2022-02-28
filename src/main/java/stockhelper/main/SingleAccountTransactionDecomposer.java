@@ -20,14 +20,7 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         List<Transaction> result = new ArrayList<>();
         Set<String> allTickets = fromTickets;
         for (String ticket : allTickets) {
-
-            String account = "";
-            if (getAccountPerTicket(from, ticket) != null) {
-                account = getAccountPerTicket(from, ticket);
-            } else if (getAccountPerTicket(to, ticket) != null) {
-                account = getAccountPerTicket(to, ticket);
-            }
-
+            String account = getAccountPerLists(from, to, ticket);
             int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
             if (difference == 0) {
             } else if (difference > 0) {
@@ -37,6 +30,16 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             }
         }
         return result;
+    }
+
+    private String getAccountPerLists(List<InvestmentLine> listA, List<InvestmentLine> listB, String ticket) {
+        String account = "";
+        if (getAccountPerTicket(listA, ticket) != null) {
+            account = getAccountPerTicket(listA, ticket);
+        } else if (getAccountPerTicket(listB, ticket) != null) {
+            account = getAccountPerTicket(listB, ticket);
+        }
+        return account;
     }
 
     private String getAccountPerTicket(List<InvestmentLine> investments, String ticket) {
