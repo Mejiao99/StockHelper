@@ -35,15 +35,12 @@ public class PerAccountBalancerTest {
 
         when(market.exchangeRate("CAD", "USD")).thenReturn(0.79);
         when(market.exchangeRate("CAD", "CAD")).thenReturn(1.0);
-
-
     }
 
     @Test
     public void one_to_one_per_account() {
         // Preparation
         InvestmentLine c1StockA = new InvestmentLine("A", 100, "c1");
-
         InvestmentLine c2StockA = new InvestmentLine("A", 20, "c2");
 
         Map<String, Double> allocations = new HashMap<>();
@@ -55,9 +52,7 @@ public class PerAccountBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(2, newAllocations.size());
-        System.out.println(newAllocations);
         validateInvestmentLine(find(newAllocations, "B", "c1"), "B", 50, "c1");
-
         validateInvestmentLine(find(newAllocations, "B", "c2"), "B", 10, "c2");
     }
 
@@ -86,12 +81,10 @@ public class PerAccountBalancerTest {
         allocations.put("X", 0.30);
         allocations.put("Y", 0.30);
 
-
         // Execution
         List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(c1StockA, c1StockB, c1StockC, c1StockD, c1StockX, c1StockY
                         , c2StockA, c2StockB, c2StockC, c2StockD, c2StockX, c2StockY),
                 allocations);
-
 
         // Validations:
         assertNotNull(newAllocations);
@@ -119,8 +112,6 @@ public class PerAccountBalancerTest {
     }
 
     private InvestmentLine find(List<InvestmentLine> newAllocations, String ticket, String account) {
-
-
         for (InvestmentLine stock : newAllocations) {
             if (stock.getTicket().equals(ticket) && stock.getAccount().equals(account)) {
                 return stock;

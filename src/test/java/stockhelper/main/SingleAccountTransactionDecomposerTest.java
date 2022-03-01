@@ -7,12 +7,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SingleAccountTransactionDecomposerTest {
     //TODO: Test if null inputs
+    //TODO: Validations inputs
+    //TODO: MultipleAccount
 
     private SingleAccountTransactionDecomposer decomposer;
 
@@ -82,7 +83,6 @@ public class SingleAccountTransactionDecomposerTest {
         validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.BUY);
         validateTransaction(find(transactionsList, "B"), "B", 220, "c", TransactionOperation.BUY);
         validateTransaction(find(transactionsList, "C"), "C", 400, "c", TransactionOperation.BUY);
-
     }
 
     @Test
@@ -101,7 +101,6 @@ public class SingleAccountTransactionDecomposerTest {
         validateTransaction(find(transactionsList, "A"), "A", 249, "c", TransactionOperation.SELL);
         validateTransaction(find(transactionsList, "B"), "B", 220, "c", TransactionOperation.SELL);
         validateTransaction(find(transactionsList, "C"), "C", 400, "c", TransactionOperation.SELL);
-
     }
 
     @Test

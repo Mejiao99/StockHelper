@@ -33,7 +33,6 @@ class SingleAccountBalancerTest {
 
         when(market.exchangeRate("CAD", "USD")).thenReturn(0.79);
         when(market.exchangeRate("CAD", "CAD")).thenReturn(1.0);
-
     }
 
     @Test
@@ -163,7 +162,6 @@ class SingleAccountBalancerTest {
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
         InvestmentLine stockB = new InvestmentLine("B", 90, "c1");
         InvestmentLine stockC = new InvestmentLine("C", 125, "c1");
-        Map<String, Double> allocations = new HashMap<>();
 
         // Execution
         List<InvestmentLine> newAllocations = balancer.balance(Arrays.asList(stockA, stockB, stockC), Collections.emptyMap());
@@ -171,7 +169,6 @@ class SingleAccountBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(0, newAllocations.size());
-
     }
 
     @Test
@@ -188,7 +185,6 @@ class SingleAccountBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(0, newAllocations.size());
-
     }
 
     @Test
@@ -204,7 +200,6 @@ class SingleAccountBalancerTest {
         // Validations:
         assertNotNull(newAllocations);
         assertEquals(0, newAllocations.size());
-
     }
 
     @Test

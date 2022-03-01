@@ -4,64 +4,55 @@ package stockhelper.main;
 import lombok.ToString;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ToString
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
+    // TODO: 1. Garantizar que todas las cuentas sean iguales 2. Garantizar que los ticket no se repitan
+
     @Override
     public List<Transaction> decompose(final List<InvestmentLine> from, final List<InvestmentLine> to) {
-        final Set<String> allTickets = new HashSet<>();
-        allTickets.addAll(getTicketsFromInvestments(from));
-        allTickets.addAll(getTicketsFromInvestments(to));
+        final Set<String> allTickets = Stream.concat(from.stream(), to.stream())
+                .map(InvestmentLine::getTicket)
+                .collect(Collectors.toSet());
+        final Map<String, String> ticketToAccount = Stream.concat(from.stream(), to.stream())
+                .collect(Collectors.toMap(
+                                InvestmentLine::getTicket,
+                                InvestmentLine::getAccount,
+                                (account1, account2) -> account1
+                        )
+                );
+        validateSameAccount(ticketToAccount.values());
+        final Map<String, Integer> qtyFrom = getQuantityMap(from);
+        final Map<String, Integer> qtyTo = getQuantityMap(to);
 
         final List<Transaction> result = new ArrayList<>();
         for (final String ticket : allTickets) {
-            final String account = getAccountPerLists(from, to, ticket);
-            final int difference = getQuantityPerTicket(from, ticket) - getQuantityPerTicket(to, ticket);
-            if (difference == 0) {
-            } else if (difference > 0) {
+            final String account = ticketToAccount.get(ticket);
+            final int difference = qtyFrom.getOrDefault(ticket, 0) - qtyTo.getOrDefault(ticket, 0);
+            if (difference > 0) {
                 result.add(new Transaction(ticket, difference, account, TransactionOperation.SELL));
-            } else {
+            } else if (difference < 0) {
                 result.add(new Transaction(ticket, -difference, account, TransactionOperation.BUY));
             }
         }
         return result;
     }
 
-    private String getAccountPerLists(final List<InvestmentLine> listA, final List<InvestmentLine> listB, final String ticket) {
-        if (getAccountPerTicket(listA, ticket) != null) {
-            return getAccountPerTicket(listA, ticket);
-        } else if (getAccountPerTicket(listB, ticket) != null) {
-            return getAccountPerTicket(listB, ticket);
+    private void validateSameAccount(final Collection<String> accounts) {
+        if (new HashSet<>(accounts).size() > 1) {
+            throw new IllegalArgumentException("All accounts must be the same");
         }
-        return null;
     }
 
-    private String getAccountPerTicket(final List<InvestmentLine> investments, final String ticket) {
-        for (final InvestmentLine line : investments) {
-            if (line.getTicket().equals(ticket)) {
-                return line.getAccount();
-            }
-        }
-        return null;
-    }
-
-    private int getQuantityPerTicket(final List<InvestmentLine> investments, final String ticket) {
-        for (final InvestmentLine line : investments) {
-            if (line.getTicket().equals(ticket)) {
-                return line.getQuantity();
-            }
-        }
-        return 0;
-    }
-
-    private Set<String> getTicketsFromInvestments(final List<InvestmentLine> investments) {
-        final Set<String> result = new HashSet<>();
-        for (final InvestmentLine line : investments) {
-            result.add(line.getTicket());
-        }
-        return result;
+    private Map<String, Integer> getQuantityMap(List<InvestmentLine> investments) {
+        return investments.stream()
+                .collect(Collectors.toMap(InvestmentLine::getTicket, InvestmentLine::getQuantity));
     }
 }
