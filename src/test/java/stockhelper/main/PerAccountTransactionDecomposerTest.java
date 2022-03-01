@@ -8,6 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PerAccountTransactionDecomposerTest {
     private PerAccountTransactionDecomposer decomposer;
@@ -43,7 +44,7 @@ public class PerAccountTransactionDecomposerTest {
         validateTransaction(find(transactions, "B", "x"), "B", 100, "x", TransactionOperation.SELL);
         validateTransaction(find(transactions, "A", "y"), "A", 777, "y", TransactionOperation.SELL);
         validateTransaction(find(transactions, "A", "z"), "A", 210, "z", TransactionOperation.BUY);
-        assertEquals(null, find(transactions, "a", "w"));
+        assertNull(find(transactions, "A", "w"));
     }
 
     private void validateTransaction(Transaction transaction, String ticket, int quantity, String account, Enum operation) {
@@ -53,8 +54,8 @@ public class PerAccountTransactionDecomposerTest {
         assertEquals(operation, transaction.getOperation());
     }
 
-    private Transaction find(List<Transaction> transactionList, String ticket, String account) {
-        for (Transaction transaction : transactionList) {
+    private Transaction find(List<Transaction> transactions, String ticket, String account) {
+        for (Transaction transaction : transactions) {
             if (transaction.getTicket().equals(ticket) && transaction.getAccount().equals(account)) {
                 return transaction;
             }
