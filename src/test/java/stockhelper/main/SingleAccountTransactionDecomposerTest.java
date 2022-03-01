@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class SingleAccountTransactionDecomposerTest {
     //TODO: Test if null inputs
     //TODO: Validations inputs
+    //TODO: What If tickets repeats in same list, same account
     //TODO: MultipleAccount
 
     private SingleAccountTransactionDecomposer decomposer;
