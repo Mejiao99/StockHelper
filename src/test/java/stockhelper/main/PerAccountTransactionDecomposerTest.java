@@ -23,8 +23,8 @@ public class PerAccountTransactionDecomposerTest {
         List<InvestmentLine> fromAllocations = Arrays.asList(
                 new InvestmentLine("A", 512, "c"),
                 new InvestmentLine("B", 100, "c"),
-                new InvestmentLine("A", 550, "c"),
-                new InvestmentLine("B", 100, "c")
+                new InvestmentLine("A", 550, "b"),
+                new InvestmentLine("B", 100, "b")
         );
         List<InvestmentLine> toAllocations = Arrays.asList(
                 new InvestmentLine("A", 1024, "c"),
