@@ -24,26 +24,26 @@ public class PerAccountTransactionDecomposerTest {
                 new InvestmentLine("A", 512, "x"),
                 new InvestmentLine("B", 100, "x"),
                 new InvestmentLine("A", 777, "y"),
-                new InvestmentLine("A", 100, "w")
+                new InvestmentLine("A", 160, "w")
         );
         List<InvestmentLine> toAllocations = Arrays.asList(
                 new InvestmentLine("A", 999, "x"),
                 new InvestmentLine("A", 210, "z"),
-                new InvestmentLine("A", 100, "w")
+                new InvestmentLine("A", 160, "w")
         );
 
         // Execution
-        List<Transaction> transactionsList = decomposer.decompose(fromAllocations, toAllocations);
+        List<Transaction> transactions = decomposer.decompose(fromAllocations, toAllocations);
 
         // Validations
-        assertNotNull(transactionsList);
-        assertEquals(3, transactionsList.size());
+        assertNotNull(transactions);
+        assertEquals(4, transactions.size());
 
-        validateTransaction(find(transactionsList, "A"), "A", 487, "x", TransactionOperation.BUY);
-        validateTransaction(find(transactionsList, "B"), "B", 100, "x", TransactionOperation.SELL);
-        validateTransaction(find(transactionsList, "A"), "A", 777, "y", TransactionOperation.BUY);
-        validateTransaction(find(transactionsList, "A"), "A", 210, "z", TransactionOperation.BUY);
-
+        validateTransaction(find(transactions, "A", "x"), "A", 487, "x", TransactionOperation.BUY);
+        validateTransaction(find(transactions, "B", "x"), "B", 100, "x", TransactionOperation.SELL);
+        validateTransaction(find(transactions, "A", "y"), "A", 777, "y", TransactionOperation.SELL);
+        validateTransaction(find(transactions, "A", "z"), "A", 210, "z", TransactionOperation.BUY);
+        assertEquals(null, find(transactions, "a", "w"));
     }
 
     private void validateTransaction(Transaction transaction, String ticket, int quantity, String account, Enum operation) {
@@ -53,9 +53,9 @@ public class PerAccountTransactionDecomposerTest {
         assertEquals(operation, transaction.getOperation());
     }
 
-    private Transaction find(List<Transaction> transactionList, String ticket) {
+    private Transaction find(List<Transaction> transactionList, String ticket, String account) {
         for (Transaction transaction : transactionList) {
-            if (transaction.getTicket().equals(ticket)) {
+            if (transaction.getTicket().equals(ticket) && transaction.getAccount().equals(account)) {
                 return transaction;
             }
         }
