@@ -22,12 +22,14 @@ public class PerAccountTransactionDecomposerTest {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(
                 new InvestmentLine("A", 512, "x"),
-                new InvestmentLine("B", 100, "x")
+                new InvestmentLine("B", 100, "x"),
+                new InvestmentLine("A", 777, "y"),
+                new InvestmentLine("A", 100, "w")
         );
         List<InvestmentLine> toAllocations = Arrays.asList(
-                new InvestmentLine("A", 1024, "x"),
-                new InvestmentLine("A", 950, "y"),
-                new InvestmentLine("A", 210, "z")
+                new InvestmentLine("A", 999, "x"),
+                new InvestmentLine("A", 210, "z"),
+                new InvestmentLine("A", 100, "w")
         );
 
         // Execution
@@ -35,12 +37,13 @@ public class PerAccountTransactionDecomposerTest {
 
         // Validations
         assertNotNull(transactionsList);
-        assertEquals(4, transactionsList.size());
+        assertEquals(3, transactionsList.size());
 
-        validateTransaction(find(transactionsList, "A"), "A", 512, "x", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "A"), "A", 487, "x", TransactionOperation.BUY);
         validateTransaction(find(transactionsList, "B"), "B", 100, "x", TransactionOperation.SELL);
-        validateTransaction(find(transactionsList, "A"), "A", 950, "y", TransactionOperation.BUY);
-        validateTransaction(find(transactionsList, "B"), "A", 210, "z", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "A"), "A", 777, "y", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "A"), "A", 210, "z", TransactionOperation.BUY);
+
     }
 
     private void validateTransaction(Transaction transaction, String ticket, int quantity, String account, Enum operation) {
