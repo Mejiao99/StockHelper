@@ -14,13 +14,9 @@ import java.util.stream.Stream;
 
 @ToString
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
-    // TODO: 1. Garantizar que todas las cuentas sean iguales 2. Garantizar que los ticket no se repitan
-
+    // TODO: Make sure tickets are not repeated
     @Override
     public List<Transaction> decompose(final List<InvestmentLine> from, final List<InvestmentLine> to) {
-        final Set<String> allTickets = Stream.concat(from.stream(), to.stream())
-                .map(InvestmentLine::getTicket)
-                .collect(Collectors.toSet());
         final Map<String, String> ticketToAccount = Stream.concat(from.stream(), to.stream())
                 .collect(Collectors.toMap(
                                 InvestmentLine::getTicket,
@@ -29,9 +25,13 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
                         )
                 );
         validateSameAccount(ticketToAccount.values());
+
+        final Set<String> allTickets = Stream.concat(from.stream(), to.stream())
+                .map(InvestmentLine::getTicket)
+                .collect(Collectors.toSet());
+
         final Map<String, Integer> qtyFrom = getQuantityMap(from);
         final Map<String, Integer> qtyTo = getQuantityMap(to);
-
         final List<Transaction> result = new ArrayList<>();
         for (final String ticket : allTickets) {
             final String account = ticketToAccount.get(ticket);
