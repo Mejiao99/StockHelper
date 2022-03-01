@@ -15,7 +15,7 @@ public class PerAccountTransactionDecomposerTest {
 
     @BeforeEach
     public void setup() {
-        decomposer = new PerAccountTransactionDecomposer();
+        decomposer = new PerAccountTransactionDecomposer(new SingleAccountTransactionDecomposer());
     }
 
     @Test
