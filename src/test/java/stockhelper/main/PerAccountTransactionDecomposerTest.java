@@ -18,7 +18,7 @@ public class PerAccountTransactionDecomposerTest {
     }
 
     @Test
-    public void buy_few_stocks() {
+    public void buy_sell_few_stocks() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(
                 new InvestmentLine("A", 512, "x"),
