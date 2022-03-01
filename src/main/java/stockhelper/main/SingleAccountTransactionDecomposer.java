@@ -4,98 +4,55 @@ package stockhelper.main;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-
-// Ejemplo:
-// Inversiones actuales = A:10:C1, B:20:C1
-// Lista de lo que quiero = A:20:C1, C:10:C2
-// Salida: A:10:C1:COMPRAR, B:20:C1:VENDER, C:10:C2:COMPRAR
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ToString
 public class SingleAccountTransactionDecomposer implements TransactionDecomposer {
+    // TODO: 1. Garantizar que todas las cuentas sean iguales 2. Garantizar que los ticket no se repitan
+
     @Override
-    public List<Transaction> decompose(List<InvestmentLine> from, List<InvestmentLine> to) {
-        //TODO: ITERATE fromTicks + toTickets
-        Set<String> fromTickets = getTicketsFromInvestments(from);
-        Set<String> toTickets = getTicketsFromInvestments(to);
+    public List<Transaction> decompose(final List<InvestmentLine> from, final List<InvestmentLine> to) {
+        final Set<String> allTickets = Stream.concat(from.stream(), to.stream())
+                .map(InvestmentLine::getTicket)
+                .collect(Collectors.toSet());
+        final Map<String, String> ticketToAccount = Stream.concat(from.stream(), to.stream())
+                .collect(Collectors.toMap(
+                                InvestmentLine::getTicket,
+                                InvestmentLine::getAccount,
+                                (account1, account2) -> account1
+                        )
+                );
+        validateSameAccount(ticketToAccount.values());
+        final Map<String, Integer> qtyFrom = getQuantityMap(from);
+        final Map<String, Integer> qtyTo = getQuantityMap(to);
 
-        List<Transaction> result = new ArrayList<>();
-
-        // Handle stocks to buy
-        Set<String> toBuy = subtractSet(toTickets, fromTickets);
-        for (String ticket : toBuy) {
-            InvestmentLine investmentLine = getInvestmentLine(to, ticket);
-            int quantity = investmentLine.getQuantity();
-            String account = investmentLine.getAccount();
-            result.add(new Transaction(ticket, quantity, account, TransactionOperation.BUY));
-        }
-        // Handle stocks to sell
-        Set<String> toSell = subtractSet(fromTickets, toTickets);
-        for (String ticket : toSell) {
-            InvestmentLine investment = getInvestmentLine(from, ticket);
-
-            int quantity = investment.getQuantity();
-            String account = investment.getAccount();
-            result.add(new Transaction(ticket, quantity, account, TransactionOperation.SELL));
-        }
-        // Handle stocks to change
-        Set<String> toChange = intersectionSet(fromTickets, toTickets);
-        for (String ticket : toChange) {
-            InvestmentLine investmentTo = getInvestmentLine(to, ticket);
-            InvestmentLine investmentFrom = getInvestmentLine(from, ticket);
-
-            int quantityTo = investmentTo.getQuantity();
-            int quantityFrom = investmentFrom.getQuantity();
-            int quantity = 0;
-            TransactionOperation transactionOperation = null;
-
-            if (quantityFrom > quantityTo) {
-                quantity = quantityFrom - quantityTo;
-                transactionOperation = TransactionOperation.SELL;
+        final List<Transaction> result = new ArrayList<>();
+        for (final String ticket : allTickets) {
+            final String account = ticketToAccount.get(ticket);
+            final int difference = qtyFrom.getOrDefault(ticket, 0) - qtyTo.getOrDefault(ticket, 0);
+            if (difference > 0) {
+                result.add(new Transaction(ticket, difference, account, TransactionOperation.SELL));
+            } else if (difference < 0) {
+                result.add(new Transaction(ticket, -difference, account, TransactionOperation.BUY));
             }
-            if (quantityFrom < quantityTo) {
-                quantity = quantityTo - quantityFrom;
-                transactionOperation = transactionOperation.BUY;
-            }
-            if (quantityFrom == quantityTo) {
-                continue;
-            }
-
-            String account = investmentTo.getAccount();
-            result.add(new Transaction(ticket, quantity, account, transactionOperation));
         }
         return result;
     }
 
-    private Set<String> intersectionSet(Set<String> setA, Set<String> setB) {
-        Set<String> result = new HashSet<>(setA);
-        result.retainAll(setB);
-        return result;
-    }
-
-    private InvestmentLine getInvestmentLine(List<InvestmentLine> investments, String ticket) {
-        for (InvestmentLine line : investments) {
-            if (line.getTicket().equals(ticket)) {
-                return line;
-            }
+    private void validateSameAccount(final Collection<String> accounts) {
+        if (new HashSet<>(accounts).size() > 1) {
+            throw new IllegalArgumentException("All accounts must be the same");
         }
-        return null;
     }
 
-    private Set<String> getTicketsFromInvestments(List<InvestmentLine> investments) {
-        Set<String> result = new HashSet<>();
-        for (InvestmentLine line : investments) {
-            result.add(line.getTicket());
-        }
-        return result;
-    }
-
-    private Set<String> subtractSet(final Set<String> setA, final Set<String> setB) {
-        Set<String> result = new HashSet<>(setA);
-        result.removeAll(setB);
-        return result;
+    private Map<String, Integer> getQuantityMap(List<InvestmentLine> investments) {
+        return investments.stream()
+                .collect(Collectors.toMap(InvestmentLine::getTicket, InvestmentLine::getQuantity));
     }
 }
