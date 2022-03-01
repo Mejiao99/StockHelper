@@ -21,16 +21,13 @@ public class PerAccountTransactionDecomposerTest {
     public void buy_few_stocks() {
         // Preparation
         List<InvestmentLine> fromAllocations = Arrays.asList(
-                new InvestmentLine("A", 512, "c"),
-                new InvestmentLine("B", 100, "c"),
-                new InvestmentLine("A", 550, "b"),
-                new InvestmentLine("B", 100, "b")
+                new InvestmentLine("A", 512, "x"),
+                new InvestmentLine("B", 100, "x")
         );
         List<InvestmentLine> toAllocations = Arrays.asList(
-                new InvestmentLine("A", 1024, "c"),
-                new InvestmentLine("B", 230, "c"),
-                new InvestmentLine("A", 950, "b"),
-                new InvestmentLine("B", 210, "b")
+                new InvestmentLine("A", 1024, "x"),
+                new InvestmentLine("A", 950, "y"),
+                new InvestmentLine("A", 210, "z")
         );
 
         // Execution
@@ -40,10 +37,10 @@ public class PerAccountTransactionDecomposerTest {
         assertNotNull(transactionsList);
         assertEquals(4, transactionsList.size());
 
-        validateTransaction(find(transactionsList, "A"), "A", 512, "c", TransactionOperation.BUY);
-        validateTransaction(find(transactionsList, "B"), "B", 130, "c", TransactionOperation.BUY);
-        validateTransaction(find(transactionsList, "A"), "C", 400, "b", TransactionOperation.BUY);
-        validateTransaction(find(transactionsList, "B"), "C", 110, "b", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "A"), "A", 512, "x", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "B"), "B", 100, "x", TransactionOperation.SELL);
+        validateTransaction(find(transactionsList, "A"), "A", 950, "y", TransactionOperation.BUY);
+        validateTransaction(find(transactionsList, "B"), "A", 210, "z", TransactionOperation.BUY);
     }
 
     private void validateTransaction(Transaction transaction, String ticket, int quantity, String account, Enum operation) {
