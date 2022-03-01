@@ -11,14 +11,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TransactionsExchangeCurrencyTest {
+public class PortfolioValueCalculatorTest {
 
     private Market market;
-    private TransactionsExchangeCurrency exchange;
+    private PortfolioValueCalculator valueCalculator;
 
     @BeforeEach
     public void setup() {
-        exchange = new TransactionsExchangeCurrency();
+        valueCalculator = new PortfolioValueCalculator();
 
         market = mock(Market.class);
         when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
@@ -43,7 +43,7 @@ public class TransactionsExchangeCurrencyTest {
         // Ticket A = 1835 CAD, Ticket B = 4227 CAD
 
         // Execution
-        List<Transaction> transactions = exchange.currencyExchange(transactionsFrom, "cad");
+        List<InvestmentLine> investments = valueCalculator.currencyExchange(transactionsFrom, "cad");
 
         // Validations
         // Validations
