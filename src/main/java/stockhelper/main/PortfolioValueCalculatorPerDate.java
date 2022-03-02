@@ -1,8 +1,10 @@
 package stockhelper.main;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface PortfolioValueCalculatorPerDate {
-    int calculate(final List<Transaction> transactions, Date date);
+    Map<Currency, LocalDate> calculate(final List<InvestmentLine> balancedInvestments, final List<Transaction> transactions,
+                                       final LocalDate startDate, final LocalDate endDate);
 }
