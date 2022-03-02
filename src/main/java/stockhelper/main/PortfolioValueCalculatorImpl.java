@@ -15,11 +15,11 @@ public class PortfolioValueCalculatorImpl implements PortfolioValueCalculator {
         for (final InvestmentLine line : lines) {
             Currency stockValue = market.getStockValue(line.getTicket());
             double conversionRate = market.exchangeRate(stockValue.getSymbol(), currency);
-            double eachValue = stockValue.getAmount() * line.getQuantity();
-            double currencyValue = eachValue * conversionRate;
-            totalValue = totalValue + currencyValue;
-        }
 
+            double eachValue = stockValue.getAmount() * line.getQuantity();
+            double eachValueCurrency = eachValue * conversionRate;
+            totalValue = totalValue + eachValueCurrency;
+        }
         return totalValue;
     }
 }
