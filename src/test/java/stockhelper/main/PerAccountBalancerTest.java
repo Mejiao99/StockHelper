@@ -16,11 +16,13 @@ import static org.mockito.Mockito.when;
 public class PerAccountBalancerTest {
     private Market market;
     private PerAccountBalancer balancer;
+    private PortfolioValueCalculatorImpl calculator;
 
     @BeforeEach
     public void setup() {
         market = mock(Market.class);
-        balancer = new PerAccountBalancer(new SingleAccountBalancer(market));
+        calculator = new PortfolioValueCalculatorImpl(market);
+        balancer = new PerAccountBalancer(new SingleAccountBalancer(market, calculator));
         when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
         when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
         when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));

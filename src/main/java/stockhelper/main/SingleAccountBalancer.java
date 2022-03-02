@@ -14,6 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class SingleAccountBalancer implements PortfolioBalancer {
     private Market market;
+    private PortfolioValueCalculatorImpl calculator;
 
     @Override
     public List<InvestmentLine> balance(List<InvestmentLine> currentItems, Map<String, Double> allocations) {
@@ -32,18 +33,7 @@ public class SingleAccountBalancer implements PortfolioBalancer {
         }
         String account = accounts.stream().findFirst().get();
 
-        double totalValue = 0;
-
-        for (InvestmentLine stock : currentItems) {
-
-            Currency stockValue = market.getStockValue(stock.getTicket());
-            double conversionRate = market.exchangeRate(stockValue.getSymbol(), "USD");
-
-            double eachValue = stockValue.getAmount() * stock.getQuantity();
-            double eachValueUSD = eachValue * conversionRate;
-
-            totalValue = totalValue + eachValueUSD;
-        }
+        double totalValue = calculator.calculate(currentItems, "USD");
 
         Map<String, Integer> results = new HashMap<>();
         for (Map.Entry<String, Double> entry : allocations.entrySet()) {
