@@ -3,10 +3,16 @@ package stockhelper.main;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -14,11 +20,13 @@ import static org.mockito.Mockito.when;
 class SingleAccountBalancerTest {
     private Market market;
     private SingleAccountBalancer balancer;
+    private PortfolioValueCalculatorImpl calculator;
 
     @BeforeEach
     public void setup() {
         market = mock(Market.class);
-        balancer = new SingleAccountBalancer(market);
+        calculator = new PortfolioValueCalculatorImpl(market);
+        balancer = new SingleAccountBalancer(market, calculator);
         when(market.getStockValue("A")).thenReturn(new Currency(10.0, "USD"));
         when(market.getStockValue("B")).thenReturn(new Currency(20.0, "USD"));
         when(market.getStockValue("C")).thenReturn(new Currency(5.0, "USD"));
@@ -69,8 +77,6 @@ class SingleAccountBalancerTest {
     public void one_to_three_stock() {
         // Preparation
         InvestmentLine stockA = new InvestmentLine("A", 100, "c1");
-
-        SingleAccountBalancer balancer = new SingleAccountBalancer(market);
         Map<String, Double> allocations = new HashMap<>();
         allocations.put("B", 0.25);
         allocations.put("C", 0.35);
