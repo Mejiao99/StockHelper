@@ -29,7 +29,6 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
         final Set<String> allTickets = Stream.concat(from.stream(), to.stream())
                 .map(InvestmentLine::getTicket)
                 .collect(Collectors.toSet());
-
         final Map<String, Integer> qtyFrom = getQuantityMap(from);
         final Map<String, Integer> qtyTo = getQuantityMap(to);
         final List<Transaction> result = new ArrayList<>();
@@ -37,9 +36,9 @@ public class SingleAccountTransactionDecomposer implements TransactionDecomposer
             final String account = ticketToAccount.get(ticket);
             final int difference = qtyFrom.getOrDefault(ticket, 0) - qtyTo.getOrDefault(ticket, 0);
             if (difference > 0) {
-                result.add(new Transaction(ticket, difference, account, TransactionOperation.SELL));
+                result.add(new Transaction(ticket, difference, account, TransactionOperation.SELL, null));
             } else if (difference < 0) {
-                result.add(new Transaction(ticket, -difference, account, TransactionOperation.BUY));
+                result.add(new Transaction(ticket, -difference, account, TransactionOperation.BUY, null));
             }
         }
         return result;
