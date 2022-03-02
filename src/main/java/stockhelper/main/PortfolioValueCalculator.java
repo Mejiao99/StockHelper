@@ -3,6 +3,6 @@ package stockhelper.main;
 import java.util.List;
 
 public interface PortfolioValueCalculator {
-    double calculate(List<InvestmentLine> lines, String currency);
+    double calculate(final List<InvestmentLine> lines, final String currency);
 }
 
