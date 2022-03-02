@@ -11,7 +11,6 @@ public class PortfolioValueCalculatorImpl implements PortfolioValueCalculator {
     @Override
     public double calculate(final List<InvestmentLine> lines, final String currency) {
         double totalValue = 0;
-
         for (final InvestmentLine line : lines) {
             Currency stockValue = market.getStockValue(line.getTicket());
             double conversionRate = market.exchangeRate(stockValue.getSymbol(), currency);
