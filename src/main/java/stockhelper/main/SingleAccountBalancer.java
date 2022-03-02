@@ -33,7 +33,7 @@ public class SingleAccountBalancer implements PortfolioBalancer {
         }
         String account = accounts.stream().findFirst().get();
 
-        double totalValue =  calculator.calculate(currentItems,"USD");;
+        double totalValue = calculator.calculate(currentItems, "USD");
 
         Map<String, Integer> results = new HashMap<>();
         for (Map.Entry<String, Double> entry : allocations.entrySet()) {
