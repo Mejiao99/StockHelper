@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class AssetsBracketsCalculatorImplTest {
     private AssetsBracketsCalculatorImpl calculator;
+
 
     @BeforeEach
     public void setup() {
@@ -24,20 +26,36 @@ public class AssetsBracketsCalculatorImplTest {
     public void when_execute_current_transaction_assets_convert_to_map_date_portfolio() {
         // Preparation
         List<Transaction> transactions = Arrays.asList(
-                // add Instant.parse("2007-05-02T18:00:00.00Z") in constructor
-                new Transaction("a", 487, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T18:00:00.00Z")),
-                // add Instant.parse("2008-05-02T18:00:00.00Z") in constructor
-                new Transaction("b", 122, "x", TransactionOperation.BUY, Instant.parse("2008-05-02T18:00:00.00Z")));
+                new Transaction("a", 10, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T18:00:00.00Z")),
+                new Transaction("a", 12, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T19:00:00.00Z")),
+                new Transaction("a", 23, "x", TransactionOperation.BUY, Instant.parse("2007-05-04T18:00:00.00Z")),
+                new Transaction("a", 16, "x", TransactionOperation.BUY, Instant.parse("2007-07-27T18:00:00.00Z")),
+                new Transaction("a", 40, "x", TransactionOperation.BUY, Instant.parse("2008-01-02T18:00:00.00Z"))
+
+        );
+
 
         // Execute
         Map<LocalDate, List<InvestmentLine>> assets = calculator.calculate(transactions);
 
+
         // Validations
         assertNotNull(assets);
-        assertEquals(2, assets.size());
+        assertEquals(4, assets.size());
 
-        assertEquals(assets.get(LocalDate.of(2007, 05, 02)), new InvestmentLine("a", 487, "x"));
-        assertEquals(assets.get(LocalDate.of(2008, 05, 02)), new InvestmentLine("b", 122, "x"));
+        assertEquals(
+                Collections.singletonList(new InvestmentLine("a", 22, "x")),
+                assets.get(LocalDate.of(2007, 5, 2)));
+        assertEquals(
+                Collections.singletonList(new InvestmentLine("a", 45, "x")),
+                assets.get(LocalDate.of(2007, 5, 4)));
+        assertEquals(
+                Collections.singletonList(new InvestmentLine("a", 61, "x")),
+                assets.get(LocalDate.of(2007, 7, 27)));
+        assertEquals(
+                Collections.singletonList(new InvestmentLine("a", 101, "x")),
+                assets.get(LocalDate.of(2008, 7, 27)));
+
     }
 
 }
