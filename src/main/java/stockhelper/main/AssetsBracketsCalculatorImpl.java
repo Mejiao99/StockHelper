@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
@@ -36,21 +37,24 @@ public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
                 } else {
                     qty = -transaction.getQuantity();
                 }
-
                 totalPerAccountTicket.merge(
                         new Key(transaction.getAccount(), transaction.getTicket()),
                         qty,
                         Integer::sum);
-
             }
-            System.err.println(date);
-            System.err.println(totalPerAccountTicket);
-
+            List<InvestmentLine> lines = new ArrayList<>();
+            for (Map.Entry<Key, Integer> entry : totalPerAccountTicket.entrySet()) {
+                String ticket = entry.getKey().getTicket();
+                int quantity = entry.getValue();
+                String account = entry.getKey().getAccount();
+                InvestmentLine line = new InvestmentLine(ticket, quantity, account);
+                lines.add(line);
+            }
+            portfolioPerDay.put(date, lines);
         }
 
-
         Map<LocalDate, List<InvestmentLine>> result = new HashMap<>();
-//        ...
+
         return null;
     }
 

@@ -27,7 +27,7 @@ public class AssetsBracketsCalculatorImplTest {
         // Preparation
         List<Transaction> transactions = Arrays.asList(
                 new Transaction("a", 12, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T18:00:00.00Z")),
-                new Transaction("a", 10, "x", TransactionOperation.SELL, Instant.parse("2007-05-02T19:00:00.00Z")),
+                new Transaction("a", 16, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T19:00:00.00Z")),
                 new Transaction("a", 23, "x", TransactionOperation.BUY, Instant.parse("2007-05-04T18:00:00.00Z")),
                 new Transaction("a", 16, "x", TransactionOperation.BUY, Instant.parse("2007-07-27T18:00:00.00Z")),
                 new Transaction("a", 40, "x", TransactionOperation.BUY, Instant.parse("2008-01-02T18:00:00.00Z"))
@@ -44,16 +44,16 @@ public class AssetsBracketsCalculatorImplTest {
         assertEquals(4, assets.size());
 
         assertEquals(
-                Collections.singletonList(new InvestmentLine("a", 22, "x")),
+                Collections.singletonList(new InvestmentLine("a", 28, "x")),
                 assets.get(LocalDate.of(2007, 5, 2)));
         assertEquals(
-                Collections.singletonList(new InvestmentLine("a", 45, "x")),
+                Collections.singletonList(new InvestmentLine("a", 51, "x")),
                 assets.get(LocalDate.of(2007, 5, 4)));
         assertEquals(
-                Collections.singletonList(new InvestmentLine("a", 61, "x")),
+                Collections.singletonList(new InvestmentLine("a", 67, "x")),
                 assets.get(LocalDate.of(2007, 7, 27)));
         assertEquals(
-                Collections.singletonList(new InvestmentLine("a", 101, "x")),
+                Collections.singletonList(new InvestmentLine("a", 107, "x")),
                 assets.get(LocalDate.of(2008, 7, 27)));
 
     }
