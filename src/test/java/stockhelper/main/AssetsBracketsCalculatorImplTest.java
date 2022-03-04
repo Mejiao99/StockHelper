@@ -26,8 +26,8 @@ public class AssetsBracketsCalculatorImplTest {
     public void when_execute_current_transaction_assets_convert_to_map_date_portfolio() {
         // Preparation
         List<Transaction> transactions = Arrays.asList(
-                new Transaction("a", 10, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T18:00:00.00Z")),
-                new Transaction("a", 12, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T19:00:00.00Z")),
+                new Transaction("a", 12, "x", TransactionOperation.BUY, Instant.parse("2007-05-02T18:00:00.00Z")),
+                new Transaction("a", 10, "x", TransactionOperation.SELL, Instant.parse("2007-05-02T19:00:00.00Z")),
                 new Transaction("a", 23, "x", TransactionOperation.BUY, Instant.parse("2007-05-04T18:00:00.00Z")),
                 new Transaction("a", 16, "x", TransactionOperation.BUY, Instant.parse("2007-07-27T18:00:00.00Z")),
                 new Transaction("a", 40, "x", TransactionOperation.BUY, Instant.parse("2008-01-02T18:00:00.00Z"))
