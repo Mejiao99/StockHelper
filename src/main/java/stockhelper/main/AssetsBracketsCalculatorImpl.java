@@ -60,7 +60,6 @@ public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
             result.put(date, accumulate);
 
         }
-        System.err.println(result);
 
         return result;
     }
