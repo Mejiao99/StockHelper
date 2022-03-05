@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
@@ -42,6 +41,7 @@ public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
                         qty,
                         Integer::sum);
             }
+
             List<InvestmentLine> lines = new ArrayList<>();
             for (Map.Entry<Key, Integer> entry : totalPerAccountTicket.entrySet()) {
                 String ticket = entry.getKey().getTicket();
@@ -52,12 +52,69 @@ public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
             }
             portfolioPerDay.put(date, lines);
         }
-
         Map<LocalDate, List<InvestmentLine>> result = new HashMap<>();
+        List<InvestmentLine> accumulate = new ArrayList<>();
+        for (LocalDate date : allDates) {
+            List<InvestmentLine> currentLines = accumulate;
+            accumulate = reduce(currentLines, portfolioPerDay.get(date));
+            result.put(date, accumulate);
 
+        }
+        System.err.println(result);
+
+        return result;
+    }
+
+    private List<InvestmentLine> reduce(List<InvestmentLine> listA, List<InvestmentLine> listB) {
+        if (listA == null || listA.isEmpty()) {
+            return listB;
+        }
+        List<InvestmentLine> result = new ArrayList<>();
+        for (InvestmentLine lineA : listA) {
+            for (InvestmentLine lineB : listB) {
+                result.add(lineSum(lineB, lineA));
+            }
+        }
+        return result;
+    }
+
+
+    private List<InvestmentLine> addToList(InvestmentLine investment, List<InvestmentLine> list) {
+        final List<InvestmentLine> result = new ArrayList<>(Collections.emptyList());
+        for (InvestmentLine line : list) {
+            if (investment.getAccount().equals(line.getAccount()) && investment.getTicket().equals(line.getTicket())) {
+                return list;
+            }
+        }
+        result.addAll(list);
+        result.add(investment);
+        return result;
+    }
+
+    private InvestmentLine lineSum(InvestmentLine lineA, InvestmentLine lineB) {
+        if (lineA.getTicket().equals(lineB.getTicket()) && lineA.getAccount().equals(lineB.getAccount())) {
+            if (lineA.getQuantity() == lineB.getQuantity()) {
+                return lineA;
+            }
+            int total = lineA.getQuantity() + lineB.getQuantity();
+            return new InvestmentLine(lineA.getTicket(), total, lineA.getAccount());
+        }
         return null;
     }
 
+    private InvestmentLine findLine(List<InvestmentLine> lines, String ticket, String account) {
+        if (lines == null) {
+            return null;
+        }
+        for (InvestmentLine line : lines) {
+            String fromTicket = line.getTicket();
+            String fromAccount = line.getTicket();
+            if (fromTicket.equals(ticket) && fromAccount.equals(account)) {
+                return line;
+            }
+        }
+        return null;
+    }
 
     @Data
     @AllArgsConstructor

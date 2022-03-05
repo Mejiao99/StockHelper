@@ -54,7 +54,7 @@ public class AssetsBracketsCalculatorImplTest {
                 assets.get(LocalDate.of(2007, 7, 27)));
         assertEquals(
                 Collections.singletonList(new InvestmentLine("a", 107, "x")),
-                assets.get(LocalDate.of(2008, 7, 27)));
+                assets.get(LocalDate.of(2008, 1, 2)));
 
     }
 
