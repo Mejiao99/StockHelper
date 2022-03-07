@@ -58,9 +58,7 @@ public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
             List<InvestmentLine> currentLines = accumulate;
             accumulate = reduce(currentLines, portfolioPerDay.get(date));
             result.put(date, accumulate);
-
         }
-
         return result;
     }
 
@@ -77,18 +75,6 @@ public class AssetsBracketsCalculatorImpl implements AssetsBracketsCalculator {
         return result;
     }
 
-
-    private List<InvestmentLine> addToList(InvestmentLine investment, List<InvestmentLine> list) {
-        final List<InvestmentLine> result = new ArrayList<>(Collections.emptyList());
-        for (InvestmentLine line : list) {
-            if (investment.getAccount().equals(line.getAccount()) && investment.getTicket().equals(line.getTicket())) {
-                return list;
-            }
-        }
-        result.addAll(list);
-        result.add(investment);
-        return result;
-    }
 
     private InvestmentLine lineSum(InvestmentLine lineA, InvestmentLine lineB) {
         if (lineA.getTicket().equals(lineB.getTicket()) && lineA.getAccount().equals(lineB.getAccount())) {
